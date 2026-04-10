@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.1 Consumption-Based Model — Asset Pricing</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #111010;
+  --ink-2:     #444340;
+  --ink-3:     #777570;
+  --paper:     #fafaf7;
+  --surface:   #f3f2ee;
+  --border:    #e2e0d8;
+  --accent:    #1a3a6b;
+  --accent-lt: #e8edf6;
+  --purple:    #534AB7;
+  --purple-lt: #EEEDFE;
+  --coral:     #993C1D;
+  --coral-lt:  #FAECE7;
+  --green:     #1a5c3a;
+  --green-lt:  #e6f2eb;
+  --amber:     #7a4e10;
+  --amber-lt:  #fdf0db;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+/* ── Nav ── */
+.topnav {
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-back {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.12s;
+}
+.nav-back:hover { color: var(--accent); }
+.nav-title {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+}
+.nav-section {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Page header ── */
+.page-header {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.6rem;
+}
+.page-title {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.page-subtitle {
+  font-size: 15px;
+  color: var(--ink-3);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+/* ── TOC ── */
+.toc {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.toc-item {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.12s;
+}
+.toc-item:hover { color: var(--accent); }
+.toc-num { color: var(--ink-3); }
+
+/* ── Body layout ── */
+.content {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 2.5rem 6rem;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 3rem 0 0;
+}
+
+.section-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.5rem;
+}
+.section-title {
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink);
+}
+
+/* ── Prose ── */
+p {
+  font-size: 15px;
+  color: var(--ink-2);
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  max-width: 680px;
+}
+p:last-child { margin-bottom: 0; }
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+/* ── Formula blocks ── */
+.formula-block {
+  margin: 1.75rem 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  overflow: hidden;
+}
+.formula-header {
+  padding: 0.5rem 1.25rem;
+  background: var(--accent-lt);
+  border-bottom: 1px solid var(--border);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.formula-body {
+  padding: 1.25rem 1.75rem;
+  text-align: center;
+  overflow-x: auto;
+}
+.formula-desc {
+  padding: 0 1.25rem 0.9rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+
+/* ── Inline formula ── */
+.math-inline { font-family: 'KaTeX_Math', serif; }
+
+/* ── Callout boxes ── */
+.callout {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.callout-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.callout-intuition { background: var(--green-lt); color: #174a2e; border-left: 3px solid var(--green); }
+.callout-intuition .callout-title { color: var(--green); }
+.callout-warning { background: var(--amber-lt); color: var(--amber); border-left: 3px solid var(--amber); }
+.callout-warning .callout-title { color: var(--amber); }
+.callout-result { background: var(--purple-lt); color: #2e2870; border-left: 3px solid var(--purple); }
+.callout-result .callout-title { color: var(--purple); }
+.callout-example { background: var(--coral-lt); color: #5c2410; border-left: 3px solid var(--coral); }
+.callout-example .callout-title { color: var(--coral); }
+
+/* ── Definition list ── */
+.def-list { margin: 1.25rem 0; }
+.def-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 0.75rem 1.25rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.def-row:first-child { border-top: 1px solid var(--border); }
+.def-term {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  align-self: start;
+  padding-top: 1px;
+}
+.def-desc {
+  color: var(--ink-2);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ── Step derivation ── */
+.derivation {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+.deriv-step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.deriv-step:last-child { border-bottom: none; }
+.deriv-num {
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-3);
+  border-right: 1px solid var(--border);
+  padding: 1rem 0;
+}
+.deriv-content {
+  padding: 0.85rem 1.25rem;
+}
+.deriv-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.3rem;
+}
+.deriv-math {
+  text-align: center;
+  padding: 0.4rem 0;
+  overflow-x: auto;
+}
+.deriv-note {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 0.3rem;
+  line-height: 1.5;
+}
+
+/* ── Nav bottom ── */
+.page-nav {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0 0;
+  margin-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.nav-btn {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--ink-3);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  transition: all 0.12s;
+}
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+.nav-btn-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; display: block; color: var(--ink-3); margin-bottom: 1px; }
+.nav-btn:hover .nav-btn-label { color: var(--accent); }
+
+/* ── Interactive widget ── */
+.widget-box {
+  margin: 2rem 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+.widget-header {
+  padding: 0.85rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.widget-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.widget-body { padding: 1.25rem 1.5rem; }
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0.6rem 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+.slider-val {
+  min-width: 44px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 1rem 0;
+}
+.metric-card {
+  background: var(--surface);
+  border-radius: 7px;
+  padding: 0.75rem 1rem;
+}
+.metric-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 10px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.metric-val {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  font-family: 'Courier New', monospace;
+}
+.chart-wrap { position: relative; height: 200px; margin-top: 1rem; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .topnav { padding: 0.75rem 1.25rem; }
+  .page-header, .content, .toc { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .def-row { grid-template-columns: 1fr; gap: 0.3rem; }
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .toc { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="nav-back" href="index.html">← Home</a>
+  <span class="nav-title">Consumption-Based Model</span>
+  <span class="nav-section">§ 2.1</span>
+</nav>
+
+<header class="page-header">
+  <div class="chapter-label">Parte II — Capitolo 2.1</div>
+  <h1 class="page-title">Consumption-Based Model</h1>
+  <p class="page-subtitle">Dal problema di ottimizzazione dell'investitore alla formula fondamentale di asset pricing. Equazione di Eulero, Stochastic Discount Factor, tasso risk-free e premio al rischio azionario.</p>
+</header>
+
+<nav class="toc">
+  <a class="toc-item" href="#setup"><span class="toc-num">1.</span> Setup</a>
+  <a class="toc-item" href="#problema"><span class="toc-num">2.</span> Problema dell'investitore</a>
+  <a class="toc-item" href="#eulero"><span class="toc-num">3.</span> Equazione di Eulero</a>
+  <a class="toc-item" href="#sdf"><span class="toc-num">4.</span> Stochastic Discount Factor</a>
+  <a class="toc-item" href="#rf"><span class="toc-num">5.</span> Tasso risk-free</a>
+  <a class="toc-item" href="#premium"><span class="toc-num">6.</span> Premio al rischio</a>
+  <a class="toc-item" href="#crra"><span class="toc-num">7.</span> Caso CRRA</a>
+  <a class="toc-item" href="#multiperiod"><span class="toc-num">8.</span> Modello multiperiodale</a>
+</nav>
+
+<div class="content">
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="setup">
+    <div class="section-label">1</div>
+    <h2 class="section-title">Setup dell'economia</h2>
+
+    <p>Il consumption-based model parte da un'economia semplificata al massimo: un unico agente rappresentativo, due periodi (oggi <em>t</em> e domani <em>t+1</em>), e incertezza sul futuro.</p>
+
+    <p>L'investitore dispone di una dotazione esogena <strong>oggi</strong> e di una dotazione incerta <strong>domani</strong>, e può scambiare nel mercato un asset finanziario per trasferire risorse tra i due periodi e tra i diversi stati di natura.</p>
+
+    <div class="def-list">
+      <div class="def-row">
+        <div class="def-term">e_t, e_{t+1}(s)</div>
+        <div class="def-desc">Dotazione dell'investitore oggi e nello stato <em>s</em> domani</div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">p_t</div>
+        <div class="def-desc">Prezzo dell'asset finanziario al tempo <em>t</em></div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">x_{t+1}(s)</div>
+        <div class="def-desc">Payoff dell'asset nello stato <em>s</em> al tempo <em>t+1</em></div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">q</div>
+        <div class="def-desc">Domanda netta dell'asset da parte dell'investitore (scelta endogena)</div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">π(s)</div>
+        <div class="def-desc">Probabilità dello stato <em>s</em> (esogena)</div>
+      </div>
+    </div>
+
+    <p>I vincoli di bilancio legano le scelte di consumo alla dotazione e alla posizione nell'asset:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Vincoli di bilancio</div>
+      <div class="formula-body" id="bc-formula"></div>
+      <div class="formula-desc">Al tempo <em>t</em>, il consumo è la dotazione meno il costo di acquisto dell'asset. Domani, nello stato <em>s</em>, il consumo è la dotazione più il payoff ricevuto.</div>
+    </div>
+
+    <div class="callout callout-intuition">
+      <div class="callout-title">Intuizione</div>
+      Comprare l'asset costa <strong>p_t · q</strong> oggi (riducendo il consumo corrente) e restituisce <strong>x_{t+1}(s) · q</strong> domani (aumentando il consumo futuro). L'investitore sceglie <em>q</em> per bilanciare il sacrificio presente con il guadagno futuro.
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="problema">
+    <div class="section-label">2</div>
+    <h2 class="section-title">Preferenze e problema dell'investitore</h2>
+
+    <p>L'investitore ha preferenze sull'utilità del consumo oggi e domani. L'utilità dipende solo dal livello di consumo — non direttamente dall'asset detenuto. Il problema di massimizzazione è:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Problema dell'investitore</div>
+      <div class="formula-body" id="prob-formula"></div>
+      <div class="formula-desc">
+        <strong>β ∈ (0,1)</strong> è il fattore di sconto soggettivo: misura la pazienza dell'investitore. <strong>u(·)</strong> è la funzione di utilità istantanea, concava e crescente. Sostituendo i vincoli di bilancio, il problema diventa incondizionato in <em>q</em>.
+      </div>
+    </div>
+
+    <p>Il parametro β cattura il fatto che l'utilità futura è valutata meno di quella presente — anche in assenza di rischio. Un β = 0.97 significa che €1 di utilità domani vale solo 97 centesimi oggi.</p>
+
+    <div class="callout callout-example">
+      <div class="callout-title">Esempio numerico</div>
+      Con β = 0.97 e u(c) = ln(c): l'investitore con consumo attuale c_t = 100 e consumo atteso c_{t+1} = 103 valuterà l'utilità futura come 0.97 · ln(103) ≈ 0.97 · 4.635 ≈ 4.495, contro un'utilità corrente di ln(100) ≈ 4.605. Se può spostare 1€ dal presente al futuro con rendimento del 3%, ci guadagna esattamente in equilibrio.
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="eulero">
+    <div class="section-label">3</div>
+    <h2 class="section-title">Derivazione dell'equazione di Eulero</h2>
+
+    <p>Per trovare la domanda ottimale <em>q</em>, si sostituiscono i vincoli nel problema e si annulla la derivata rispetto a <em>q</em>. Applicando la regola della catena:</p>
+
+    <div class="derivation">
+      <div class="deriv-step">
+        <div class="deriv-num">1</div>
+        <div class="deriv-content">
+          <div class="deriv-label">Derivata dell'utilità corrente rispetto a q</div>
+          <div class="deriv-math" id="d1"></div>
+          <div class="deriv-note">Comprare una unità in più dell'asset riduce il consumo corrente di p_t → perdita di utilità marginale u'(c_t) · p_t</div>
+        </div>
+      </div>
+      <div class="deriv-step">
+        <div class="deriv-num">2</div>
+        <div class="deriv-content">
+          <div class="deriv-label">Derivata dell'utilità futura rispetto a q</div>
+          <div class="deriv-math" id="d2"></div>
+          <div class="deriv-note">Una unità in più dell'asset aumenta il consumo futuro di x_{t+1}(s) per ogni stato s → guadagno di utilità attesa</div>
+        </div>
+      </div>
+      <div class="deriv-step">
+        <div class="deriv-num">3</div>
+        <div class="deriv-content">
+          <div class="deriv-label">Condizione del primo ordine (somma = 0)</div>
+          <div class="deriv-math" id="d3"></div>
+        </div>
+      </div>
+      <div class="deriv-step">
+        <div class="deriv-num">4</div>
+        <div class="deriv-content">
+          <div class="deriv-label">Equazione di Eulero — forma finale</div>
+          <div class="deriv-math" id="d4"></div>
+          <div class="deriv-note">Diviso per u'(c_t). Il costo marginale di investire oggi (sinistra) deve eguagliare il beneficio atteso domani (destra).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-intuition">
+      <div class="callout-title">Lettura economica</div>
+      L'equazione di Eulero dice: <em>comprare una quota in più dell'asset costa p_t unità di utilità marginale oggi.</em> In equilibrio questo deve essere uguale a ciò che si guadagna domani in valore atteso. Se il lato sinistro fosse maggiore del destro, l'investitore venderebbe asset; se fosse minore, ne comprerebbe — fino all'eguaglianza.
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-header">Equazione di Eulero — forma compatta</div>
+      <div class="formula-body" id="euler-compact"></div>
+      <div class="formula-desc">Questa è la condizione fondamentale che governa ogni scelta di portafoglio razionale. Vale per qualsiasi asset, qualsiasi funzione di utilità concava, qualsiasi struttura di incertezza.</div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="sdf">
+    <div class="section-label">4</div>
+    <h2 class="section-title">Il Stochastic Discount Factor (SDF)</h2>
+
+    <p>Dividendo entrambi i lati dell'equazione di Eulero per u'(c_t), il prezzo dell'asset diventa:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Formula di Pricing — Consumption-Based</div>
+      <div class="formula-body" id="pricing-formula"></div>
+      <div class="formula-desc">Il prezzo di <em>qualsiasi</em> asset è l'aspettativa del prodotto tra lo SDF e il payoff. Questo vale simultaneamente per tutti gli asset nell'economia.</div>
+    </div>
+
+    <p>Confrontando con la formula generica di pricing <span id="generic-formula-inline"></span>, si vede che il <strong>Fattore di Sconto Stocastico</strong> deve essere:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Definizione dello Stochastic Discount Factor</div>
+      <div class="formula-body" id="sdf-def"></div>
+      <div class="formula-desc">m_{t+1} è il <em>rapporto di utilità marginale intertemporale</em>. È stocastico perché c_{t+1} non è noto al tempo t. È il rapporto tra quanto vale marginalmente un euro domani rispetto ad oggi.</div>
+    </div>
+
+    <div class="def-list">
+      <div class="def-row">
+        <div class="def-term">β u'(c_{t+1})</div>
+        <div class="def-desc">Utilità marginale <em>scontata</em> del consumo futuro — quanto vale un euro in più domani</div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">u'(c_t)</div>
+        <div class="def-desc">Utilità marginale del consumo corrente — quanto vale un euro in più oggi</div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">m_{t+1}(s) alto</div>
+        <div class="def-desc">Stato <em>s</em> con consumo basso → la ricchezza è preziosa → l'asset che paga in questo stato è molto valorizzato</div>
+      </div>
+      <div class="def-row">
+        <div class="def-term">m_{t+1}(s) basso</div>
+        <div class="def-desc">Stato <em>s</em> con consumo alto → la ricchezza è abbondante → un euro in più vale poco</div>
+      </div>
+    </div>
+
+    <div class="callout callout-result">
+      <div class="callout-title">Risultato fondamentale</div>
+      Lo SDF è il <strong>prezzo implicito</strong> dato al consumo futuro in ciascuno stato di natura, relativo al consumo corrente. Un asset è tanto più prezioso quanto più il suo payoff è correlato negativamente con il consumo aggregato — cioè quanto più "assicura" contro gli stati cattivi.
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="rf">
+    <div class="section-label">5</div>
+    <h2 class="section-title">Tasso di interesse risk-free</h2>
+
+    <p>Un asset privo di rischio paga 1 in ogni stato di natura: x^f_{t+1}(s) = 1 per ogni s. La sua formula di pricing diventa:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Prezzo e rendimento del titolo risk-free</div>
+      <div class="formula-body" id="rf-formula"></div>
+      <div class="formula-desc">Il prezzo del titolo risk-free è uguale all'aspettativa dello SDF. Il rendimento lordo R^f è il suo reciproco.</div>
+    </div>
+
+    <p>Questo risultato ha un'interpretazione immediata: l'investitore è disposto a prestare denaro senza rischio solo al tasso che compensa il valore temporale del denaro e le sue aspettative di crescita del consumo.</p>
+
+    <div class="callout callout-intuition">
+      <div class="callout-title">Intuizione sulla Fischer equation</div>
+      Se ci si aspetta una crescita del consumo elevata (consumo futuro alto → u'(c_{t+1}) basso → E[m] basso), il tasso risk-free sarà <strong>alto</strong>. L'investitore vuole essere compensato per il fatto che il denaro domani varrà meno (abbonderà di consumo). Questa è la logica della <em>Fisher equation</em> generalizzata.
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-header">Relazione tasso risk-free — crescita del consumo</div>
+      <div class="formula-body" id="rf-growth"></div>
+      <div class="formula-desc">Approssimazione log-lineare. Il tasso reale risk-free cresce con la crescita attesa del consumo (effetto sostituzione intertemporale) e decresce con la varianza del consumo (precautionary saving).</div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="premium">
+    <div class="section-label">6</div>
+    <h2 class="section-title">Premio al rischio azionario</h2>
+
+    <p>Per un asset rischioso con rendimento R_{t+1}, la condizione di pricing implica E[m·R] = 1. Usando le proprietà della covarianza:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Decomposizione del rendimento atteso</div>
+      <div class="formula-body" id="premium-formula"></div>
+      <div class="formula-desc">Il rendimento atteso di qualsiasi asset è il tasso risk-free più un termine di aggiustamento al rischio che dipende dalla covarianza tra il rendimento e lo SDF.</div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-header">Premio al rischio (equity premium)</div>
+      <div class="formula-body" id="ep-formula"></div>
+      <div class="formula-desc">Il premio al rischio è proporzionale alla covarianza negativa tra il rendimento dell'asset e lo SDF (ovvero la covarianza positiva con la crescita del consumo). Un asset che paga quando il consumo è già alto riceve un premio basso — o negativo.</div>
+    </div>
+
+    <div class="callout callout-result">
+      <div class="callout-title">Il principio fondamentale della valutazione del rischio</div>
+      Non è la <em>volatilità</em> dell'asset a determinare il suo premio al rischio, ma la sua <strong>covarianza con il consumo aggregato</strong>. Un asset che va bene quando tutti vanno bene è poco utile come assicurazione → richiede un premio alto. Un asset che va bene quando tutti soffrono (covarianza negativa col consumo) è preziosissimo → può avere rendimento atteso basso, o addirittura negativo.
+    </div>
+
+    <!-- INTERACTIVE WIDGET -->
+    <div class="widget-box">
+      <div class="widget-header">
+        <div class="widget-dot"></div>
+        Esplorazione interattiva — covarianza e premio al rischio
+      </div>
+      <div class="widget-body">
+        <p style="font-family: system-ui, sans-serif; font-size: 13px; color: var(--ink-3); margin-bottom: 1rem; max-width: 100%;">Cambia la correlazione tra rendimento e consumo (e i parametri di preferenza) per vedere come varia il premio al rischio.</p>
+
+        <div class="slider-row">
+          <span style="min-width:120px; font-family:system-ui,sans-serif">γ (risk aversion)</span>
+          <input type="range" min="1" max="20" step="1" value="5" id="w-gamma" oninput="updateWidget()">
+          <span class="slider-val" id="lbl-wgamma">5</span>
+        </div>
+        <div class="slider-row">
+          <span style="min-width:120px; font-family:system-ui,sans-serif">β (patience)</span>
+          <input type="range" min="0.90" max="0.99" step="0.01" value="0.97" id="w-beta" oninput="updateWidget()">
+          <span class="slider-val" id="lbl-wbeta">0.97</span>
+        </div>
+        <div class="slider-row">
+          <span style="min-width:120px; font-family:system-ui,sans-serif">σ_g (consumo std)</span>
+          <input type="range" min="0.005" max="0.10" step="0.005" value="0.036" id="w-sg" oninput="updateWidget()">
+          <span class="slider-val" id="lbl-wsg">0.036</span>
+        </div>
+        <div class="slider-row">
+          <span style="min-width:120px; font-family:system-ui,sans-serif">corr(R, g)</span>
+          <input type="range" min="-1" max="1" step="0.05" value="0.2" id="w-corr" oninput="updateWidget()">
+          <span class="slider-val" id="lbl-wcorr">0.20</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Sharpe ratio max</div>
+            <div class="metric-val" id="w-sharpe">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Premio al rischio approx.</div>
+            <div class="metric-val" id="w-ep">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">γ · σ_g (chiave puzzle)</div>
+            <div class="metric-val" id="w-key">—</div>
+          </div>
+        </div>
+
+        <div style="font-family: system-ui, sans-serif; font-size: 12px; color: var(--ink-3); margin-top: 0.5rem; padding: 0.75rem 1rem; background: var(--surface); border-radius: 6px;" id="w-comment">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="crra">
+    <div class="section-label">7</div>
+    <h2 class="section-title">Caso CRRA — Utilità Isoelastica</h2>
+
+    <p>Con la funzione di utilità <strong>CRRA</strong> (la più usata in macrofinanza), u(c) = c^(1−γ)/(1−γ), l'utilità marginale è u'(c) = c^(−γ). Lo SDF assume la forma esplicita:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">SDF con utilità CRRA</div>
+      <div class="formula-body" id="crra-sdf"></div>
+      <div class="formula-desc">
+        g_{t+1} = c_{t+1}/c_t è il fattore di crescita del consumo. γ controlla la curvatura: con γ alto, lo SDF è molto sensibile alle variazioni del consumo.
+      </div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-header">Tasso risk-free con CRRA (approssimazione log-lineare)</div>
+      <div class="formula-body" id="crra-rf"></div>
+      <div class="formula-desc">
+        Il tasso risk-free cresce con γ (avversione al rischio), con E[g] (crescita attesa), e decresce con la varianza del consumo (precautionary saving). <strong>Il problema:</strong> un γ alto che aumenta il premio al rischio fa anche esplodere il tasso risk-free — il cuore dell'equity premium puzzle.
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">Il vincolo strutturale della CRRA</div>
+      Con CRRA, <strong>avversione al rischio</strong> (γ) e <strong>elasticità di sostituzione intertemporale</strong> (EIS = 1/γ) sono lo stesso parametro con segno opposto. Aumentare γ per spiegare l'equity premium implica automaticamente una bassa EIS → il consumo è molto "smooth" → il risk-free rate esplode. Questo è il motivo per cui il modello di Mehra-Prescott fallisce e perché Epstein-Zin ha introdotto le preferenze ricorsive.
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── -->
+  <section class="section" id="multiperiod">
+    <div class="section-label">8</div>
+    <h2 class="section-title">Modello Multiperiodale e Economia di Dotazione</h2>
+
+    <p>Con un orizzonte infinito, l'investitore massimizza:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Utilità lifetime (infinito orizzonte)</div>
+      <div class="formula-body" id="lifetime-u"></div>
+      <div class="formula-desc">Le condizioni di primo ordine sono le stesse del modello a due periodi: la stessa equazione di Eulero vale per ogni coppia di date (t, t+1), e per ogni asset.</div>
+    </div>
+
+    <p>Nell'<strong>economia di dotazione</strong> (Lucas tree, 1978), non c'è produzione: l'output è interamente consumato, c_t = y_t. L'asset rischioso è un claim sull'intero output — un "albero" che produce dividendi y_t. In equilibrio:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Condizioni di equilibrio — Economia di dotazione</div>
+      <div class="formula-body" id="eq-conditions"></div>
+      <div class="formula-desc">
+        p_t è il prezzo dell'asset rischioso, y_t sono i dividendi. La seconda equazione rispecchia il fatto che le obbligazioni si elidono in aggregato (chi le emette e chi le detiene sono lo stesso agente rappresentativo).
+      </div>
+    </div>
+
+    <p>Definendo il <strong>rapporto prezzo-dividendo</strong> ω_t ≡ p_t/y_t e assumendo g^c = g^y (consumo = dividendi), l'equazione di pricing diventa stazionaria:</p>
+
+    <div class="formula-block">
+      <div class="formula-header">Equazione per il price-dividend ratio</div>
+      <div class="formula-body" id="omega-eq"></div>
+      <div class="formula-desc">
+        Questa equazione determina ω_t in funzione delle aspettative di crescita futura e dello SDF. È il punto di partenza del modello di Mehra-Prescott, dove si risolve per i valori stazionari ω(1) e ω(2) nei due stati della catena di Markov.
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="page-nav">
+      <a class="nav-btn" href="index.html">
+        <span>
+          <span class="nav-btn-label">← Indietro</span>
+          Home del corso
+        </span>
+      </a>
+      <a class="nav-btn" href="crra.html">
+        <span>
+          <span class="nav-btn-label">Approfondisci →</span>
+          Funzione di utilità CRRA
+        </span>
+      </a>
+    </div>
+
+  </section>
+
+</div><!-- /content -->
+
+<!-- KaTeX -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script>
+function K(el, tex, display) {
+  const e = document.getElementById(el);
+  if (!e) return;
+  katex.render(tex, e, { displayMode: !!display, throwOnError: false });
+}
+
+// ── 1. Vincoli di bilancio ──
+K('bc-formula', `\\begin{cases} c_t = e_t - p_t \\, q \\\\[6pt] c_{t+1}(s) = e_{t+1}(s) + x_{t+1}(s) \\, q \\end{cases}`, true);
+
+// ── 2. Problema ──
+K('prob-formula', `\\max_{q} \\; U = u(c_t) + \\beta \\, \\mathbb{E}_t\\!\\left[u(c_{t+1})\\right] \\quad \\text{s.t. vincoli di bilancio}`, true);
+
+// ── 3. Derivazione ──
+K('d1', `\\frac{\\partial u(c_t)}{\\partial q} = u'(c_t) \\cdot (-p_t)`, true);
+K('d2', `\\frac{\\partial}{\\partial q}\\,\\beta\\mathbb{E}\\left[u(c_{t+1})\\right] = \\beta\\,\\mathbb{E}\\!\\left[u'(c_{t+1})\\, x_{t+1}\\right]`, true);
+K('d3', `-u'(c_t)\\,p_t + \\beta\\,\\mathbb{E}\\!\\left[u'(c_{t+1})\\,x_{t+1}\\right] = 0`, true);
+K('d4', `\\underbrace{p_t}_{\\text{costo oggi}} = \\mathbb{E}_t\\!\\left[\\underbrace{\\frac{\\beta\\,u'(c_{t+1})}{u'(c_t)}}_{m_{t+1}}\\cdot x_{t+1}\\right]`, true);
+
+// ── Euler compact ──
+K('euler-compact', `p_t\\,u'(c_t) = \\beta\\,\\mathbb{E}_t\\!\\left[u'(c_{t+1})\\,x_{t+1}\\right]`, true);
+
+// ── 4. SDF ──
+K('pricing-formula', `p_t = \\mathbb{E}_t\\!\\left[m_{t+1}\\,x_{t+1}\\right]`, true);
+K('generic-formula-inline', `p = \\mathbb{E}[m\\,x]`, false);
+K('sdf-def', `m_{t+1} \\equiv \\frac{\\beta\\,u'(c_{t+1})}{u'(c_t)}`, true);
+
+// ── 5. Risk-free ──
+K('rf-formula', `p^f_t = \\mathbb{E}_t[m_{t+1}] \\qquad \\Longrightarrow \\qquad R^f_{t+1} = \\frac{1}{\\mathbb{E}_t[m_{t+1}]}`, true);
+K('rf-growth', `r^f_{t+1} \\approx -\\ln\\beta + \\gamma\\,\\mathbb{E}_t[\\Delta\\ln c_{t+1}] - \\frac{\\gamma^2}{2}\\,\\sigma^2_{\\Delta c}`, true);
+
+// ── 6. Premium ──
+K('premium-formula', `\\mathbb{E}_t[R_{t+1}] = R^f_{t+1} - R^f_{t+1}\\,\\text{Cov}_t(m_{t+1},\\,R_{t+1})`, true);
+K('ep-formula', `\\underbrace{\\mathbb{E}_t[R_{t+1}] - R^f_{t+1}}_{\\text{equity premium}} = -R^f_{t+1}\\,\\text{Cov}_t(m_{t+1},R_{t+1}) = R^f_{t+1}\\,\\text{Cov}_t\\!\\left(\\frac{u'(c_{t+1})}{u'(c_t)},\\,-R_{t+1}\\right)`, true);
+
+// ── 7. CRRA SDF ──
+K('crra-sdf', `m_{t+1} = \\beta\\left(\\frac{c_{t+1}}{c_t}\\right)^{\\!-\\gamma} = \\beta\\,g_{t+1}^{-\\gamma}`, true);
+K('crra-rf', `r^f \\approx -\\ln\\beta + \\gamma\\,\\mu_g - \\frac{\\gamma^2}{2}\\,\\sigma_g^2`, true);
+
+// ── 8. Multiperiod ──
+K('lifetime-u', `U_0 = \\mathbb{E}_0\\!\\left[\\sum_{t=0}^{\\infty}\\beta^t\\,u(c_t)\\right]`, true);
+K('eq-conditions', `p_t = \\mathbb{E}_t\\!\\left[m_{t+1}(p_{t+1}+y_{t+1})\\right] \\qquad \\text{e} \\qquad 1 = \\mathbb{E}_t\\!\\left[m_{t+1}\\,R^f_{t+1}\\right]`, true);
+K('omega-eq', `\\omega_t = \\mathbb{E}_t\\!\\left[m_{t+1}\\,g_{t+1}\\,(1+\\omega_{t+1})\\right] \\quad \\text{dove} \\quad g_{t+1} = \\frac{c_{t+1}}{c_t}`, true);
+</script>
+
+<!-- Interactive widget JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function updateWidget() {
+  const gamma = parseInt(document.getElementById('w-gamma').value);
+  const beta  = parseFloat(document.getElementById('w-beta').value);
+  const sg    = parseFloat(document.getElementById('w-sg').value);
+  const corr  = parseFloat(document.getElementById('w-corr').value);
+
+  document.getElementById('lbl-wgamma').textContent = gamma;
+  document.getElementById('lbl-wbeta').textContent  = beta.toFixed(2);
+  document.getElementById('lbl-wsg').textContent    = sg.toFixed(3);
+  document.getElementById('lbl-wcorr').textContent  = corr.toFixed(2);
+
+  // Hansen-Jagannathan bound: Sharpe ≤ σ(m)/E(m) ≈ γ·σ_g
+  const sharpe = (gamma * sg).toFixed(3);
+  // Approx equity premium: EP ≈ γ · corr · σ_g · σ_R (assume σ_R = 0.16)
+  const sigmaR = 0.16;
+  const ep = (gamma * corr * sg * sigmaR).toFixed(4);
+  const key = (gamma * sg).toFixed(4);
+
+  document.getElementById('w-sharpe').textContent = sharpe;
+  document.getElementById('w-ep').textContent     = parseFloat(ep) >= 0 ? '+' + ep : ep;
+  document.getElementById('w-key').textContent    = key;
+
+  const comment = document.getElementById('w-comment');
+  const epVal = parseFloat(ep);
+  const sharpVal = parseFloat(sharpe);
+
+  if (corr < 0) {
+    comment.textContent = '→ Correlazione negativa: l\'asset paga quando il consumo è basso (assicurazione pura) → il suo premio può essere negativo. Gli investitori accettano un rendimento basso in cambio di protezione.';
+  } else if (sharpVal < 0.3 && epVal < 0.03) {
+    comment.textContent = `→ Con γ = ${gamma} e σ_g = ${sg.toFixed(3)}, γ·σ_g = ${key} è troppo piccolo per spiegare il Sharpe ratio empirico (~0.5). Questo è il nucleo dell'equity premium puzzle.`;
+  } else if (gamma >= 15) {
+    comment.textContent = `→ γ = ${gamma} è molto alto: economicamente implausibile. Con questa avversione al rischio il tasso risk-free esploderebbe a livelli irrealistici (risk-free rate puzzle).`;
+  } else {
+    comment.textContent = `→ γ·σ_g = ${key}. Il Sharpe ratio massimo dell'economia è circa ${sharpe}. Più alto γ o più alta la volatilità del consumo, più alto può essere il premio al rischio — ma al costo di un R^f più alto.`;
+  }
+}
+updateWidget();
+</script>
+
+</body>
+</html>
