@@ -3,142 +3,543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Funzioni di Utilità — Asset Pricing</title>
+<title>Asset Pricing — Programma del Corso</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    background: #fafaf8;
-    color: #1a1a1a;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-  .container { max-width: 820px; width: 100%; }
-  .header { margin-bottom: 2.5rem; }
-  .header h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
-  .header p { font-size: 15px; color: #666; line-height: 1.6; max-width: 560px; }
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .card {
-    background: #fff;
-    border: 1px solid #e8e6e0;
-    border-radius: 12px;
-    padding: 1.5rem 1.75rem;
-    text-decoration: none;
-    color: inherit;
-    transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
-    cursor: pointer;
-    display: block;
-  }
-  .card:hover {
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transform: translateY(-2px);
-    border-color: #ccc;
-  }
-  .card-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-  }
-  .badge-crra { background: #EEEDFE; color: #534AB7; }
-  .badge-cara { background: #FAECE7; color: #993C1D; }
-  .badge-iara { background: #EAF3DE; color: #3B6D11; }
-  .badge-hara { background: #E6F1FB; color: #185FA5; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .card-title { font-size: 19px; font-weight: 600; margin-bottom: 0.35rem; letter-spacing: -0.3px; }
-  .card-subtitle { font-size: 12px; color: #999; font-weight: 500; margin-bottom: 0.85rem; letter-spacing: 0.3px; }
-  .card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 1.1rem; }
-  .card-props { display: flex; gap: 8px; flex-wrap: wrap; }
-  .prop { font-size: 11px; color: #777; background: #f5f4f0; border-radius: 5px; padding: 3px 8px; }
-  .card-arrow {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem;
-    font-size: 18px;
-    color: #bbb;
-    transition: color 0.15s, transform 0.15s;
-  }
-  .card:hover .card-arrow { color: #555; transform: translateX(3px); }
-  .footer { margin-top: 2.5rem; text-align: center; font-size: 12px; color: #bbb; }
+:root {
+  --ink:       #111010;
+  --ink-2:     #444340;
+  --ink-3:     #888680;
+  --paper:     #fafaf7;
+  --surface:   #f3f2ee;
+  --border:    #e2e0d8;
+  --border-2:  #ccc9be;
+  --accent:    #1a3a6b;
+  --accent-lt: #e8edf6;
+  --done:      #1a5c3a;
+  --done-lt:   #e6f2eb;
+  --wip:       #7a4e10;
+  --wip-lt:    #fdf0db;
+  --soon:      #888680;
+  --soon-lt:   #f3f2ee;
+}
 
-  @media (max-width: 580px) {
-    .grid { grid-template-columns: 1fr; }
-    .header h1 { font-size: 22px; }
-  }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 3rem 1.75rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.site-title {
+  font-size: 11px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.site-name {
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-top: 4px;
+  color: var(--ink);
+}
+.header-meta {
+  text-align: right;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+
+/* ── Layout ── */
+.main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 3rem 3rem 5rem;
+}
+
+.intro {
+  max-width: 600px;
+  margin-bottom: 3rem;
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+}
+.intro p {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.75;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+}
+.leg-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Sections ── */
+.sections { display: flex; flex-direction: column; gap: 2.5rem; }
+
+.section-block {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.section-num {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+
+.section-desc {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-left: auto;
+  text-align: right;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+/* ── Topic rows ── */
+.topics { display: flex; flex-direction: column; }
+
+.topic-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+  position: relative;
+}
+.topic-row:last-child { border-bottom: none; }
+.topic-row.clickable:hover { background: var(--surface); cursor: pointer; }
+.topic-row.locked { opacity: 0.55; cursor: default; }
+
+.topic-num {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--ink-3);
+  min-width: 36px;
+}
+
+.topic-info { flex: 1; min-width: 0; }
+.topic-name {
+  font-size: 14px;
+  color: var(--ink);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.topic-sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.4;
+}
+
+.topic-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.tag-done  { background: var(--done-lt);  color: var(--done); }
+.tag-wip   { background: var(--wip-lt);   color: var(--wip);  }
+.tag-soon  { background: var(--soon-lt);  color: var(--soon); }
+.tag-key   { background: var(--accent-lt); color: var(--accent); }
+
+.topic-arrow {
+  font-size: 16px;
+  color: var(--border-2);
+  transition: color 0.12s, transform 0.12s;
+  flex-shrink: 0;
+}
+.topic-row.clickable:hover .topic-arrow { color: var(--accent); transform: translateX(3px); }
+
+/* ── Sub-grid (utility functions) ── */
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.sub-card {
+  padding: 1rem 1.25rem;
+  border-right: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+}
+.sub-card:last-child { border-right: none; }
+.sub-card:hover { background: var(--surface); }
+.sub-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-bottom: 0.5rem;
+}
+.sub-name {
+  font-size: 13px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.sub-desc {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.4;
+}
+.sub-arrow {
+  display: block;
+  text-align: right;
+  font-size: 13px;
+  color: var(--border-2);
+  margin-top: 0.5rem;
+  transition: color 0.12s;
+}
+.sub-card:hover .sub-arrow { color: var(--accent); }
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 3rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .site-header { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+  .main { padding: 2rem 1.5rem 4rem; }
+  .section-desc { display: none; }
+  .sub-grid { grid-template-columns: repeat(2, 1fr); }
+  .sub-card:nth-child(2) { border-right: none; }
+  .sub-card:nth-child(3) { border-right: 1px solid var(--border); }
+  .footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>Funzioni di Utilità</h1>
-    <p>Esplora interattivamente le principali funzioni di utilità usate in Asset Pricing. Ogni pagina mostra grafici dinamici e spiegazioni economiche.</p>
+
+<header class="site-header">
+  <div>
+    <div class="site-title">Corso di Laurea Magistrale</div>
+    <div class="site-name">Asset Pricing</div>
+  </div>
+  <div class="header-meta">
+    Materiale interattivo<br>
+    Aggiornato: Aprile 2026
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="intro">
+    <p>Raccolta di pagine interattive per lo studio dell'Asset Pricing. I contenuti seguono la struttura logica del corso: dai fondamenti teorici ai modelli applicati, passando per il framework del consumption-based model.</p>
   </div>
 
-  <div class="grid">
-
-    <a class="card" href="crra.html">
-      <div class="card-badge badge-crra">CRRA</div>
-      <div class="card-title">Isoelastica</div>
-      <div class="card-subtitle">Constant Relative Risk Aversion</div>
-      <div class="card-desc">Il rischio è valutato in proporzione alla ricchezza. Al crescere del patrimonio, l'avversione relativa resta costante mentre quella assoluta diminuisce.</div>
-      <div class="card-props">
-        <span class="prop">ARA decrescente</span>
-        <span class="prop">RRA costante = γ</span>
-        <span class="prop">Empiricamente realistica</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-    <a class="card" href="cara.html">
-      <div class="card-badge badge-cara">CARA</div>
-      <div class="card-title">Esponenziale</div>
-      <div class="card-subtitle">Constant Absolute Risk Aversion</div>
-      <div class="card-desc">Il rischio è valutato in termini assoluti. La cifra pagata per evitare un rischio non dipende dal livello di ricchezza dell'investitore.</div>
-      <div class="card-props">
-        <span class="prop">ARA costante = φ</span>
-        <span class="prop">RRA crescente</span>
-        <span class="prop">Utile con rendimenti normali</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-    <a class="card" href="iara.html">
-      <div class="card-badge badge-iara">IARA</div>
-      <div class="card-title">Quadratica</div>
-      <div class="card-subtitle">Increasing Absolute Risk Aversion</div>
-      <div class="card-desc">L'avversione al rischio cresce con la ricchezza, sia in termini assoluti che relativi. Utile per derivare il CAPM ma poco realistica empiricamente.</div>
-      <div class="card-props">
-        <span class="prop">ARA crescente</span>
-        <span class="prop">RRA crescente</span>
-        <span class="prop">Base per il CAPM</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
-    <a class="card" href="hara.html">
-      <div class="card-badge badge-hara">HARA</div>
-      <div class="card-title">Generalizzata</div>
-      <div class="card-subtitle">Hyperbolic Absolute Risk Aversion</div>
-      <div class="card-desc">Forma generale che include CRRA, CARA e IARA come casi speciali. Offre la massima flessibilità nella modellazione delle preferenze al rischio.</div>
-      <div class="card-props">
-        <span class="prop">ARA iperbolica</span>
-        <span class="prop">Generalizza tutte</span>
-        <span class="prop">Due parametri γ, φ</span>
-      </div>
-      <div class="card-arrow">→</div>
-    </a>
-
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--done)"></div>Disponibile</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--wip)"></div>In preparazione</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--soon)"></div>In arrivo</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>Fondamentale</div>
   </div>
 
-  <div class="footer">Asset Pricing · Funzioni di Utilità Interattive</div>
-</div>
+  <div class="sections">
+
+    <!-- PARTE I -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">Parte I</div>
+        <div class="section-title">Fondamenti dell'Asset Pricing</div>
+        <div class="section-desc">La struttura di base: cos'è un asset finanziario, come si prezza, e il concetto di SDF</div>
+      </div>
+      <div class="topics">
+        <div class="topic-row locked">
+          <div class="topic-num">1.1</div>
+          <div class="topic-info">
+            <div class="topic-name">Assets finanziari e formula di pricing</div>
+            <div class="topic-sub">Payoff, prezzi, rendimenti. La legge del prezzo unico e il pricing formula p = E[mx]</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+        <div class="topic-row locked">
+          <div class="topic-num">1.2</div>
+          <div class="topic-info">
+            <div class="topic-name">Stochastic Discount Factor</div>
+            <div class="topic-sub">Definizione generale di SDF. Relazione con il fattore di sconto classico. Arbitraggio e completezza dei mercati</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTE II -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">Parte II</div>
+        <div class="section-title">Consumption-Based Model</div>
+        <div class="section-desc">Il framework centrale del corso. Dalle preferenze dell'investitore ai prezzi degli asset</div>
+      </div>
+      <div class="topics">
+
+        <a class="topic-row clickable" href="consumption_based_model.html">
+          <div class="topic-num">2.1</div>
+          <div class="topic-info">
+            <div class="topic-name">Principi del Consumption-Based Model</div>
+            <div class="topic-sub">Problema dell'investitore, equazione di Eulero, SDF e formula di pricing. Tasso risk-free e premio al rischio</div>
+          </div>
+          <div class="topic-tags">
+            <span class="tag tag-done">Disponibile</span>
+            <span class="tag tag-key">Fondamentale</span>
+          </div>
+          <div class="topic-arrow">→</div>
+        </a>
+
+        <!-- Sub-grid for utility functions -->
+        <div style="padding: 0.75rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border);">
+          <div style="font-family: system-ui, sans-serif; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">2.2 — Funzioni di Utilità</div>
+        </div>
+        <div class="sub-grid">
+
+          <a class="sub-card" href="crra.html">
+            <div class="sub-badge" style="background:#EEEDFE; color:#534AB7;">CRRA</div>
+            <div class="sub-name">Isoelastica</div>
+            <div class="sub-desc">RRA costante · U(c) = c^(1−γ)/(1−γ)</div>
+            <div class="sub-arrow">→</div>
+          </a>
+
+          <a class="sub-card" href="cara.html">
+            <div class="sub-badge" style="background:#FAECE7; color:#993C1D;">CARA</div>
+            <div class="sub-name">Esponenziale</div>
+            <div class="sub-desc">ARA costante · U(c) = −e^(−φc)/φ</div>
+            <div class="sub-arrow">→</div>
+          </a>
+
+          <a class="sub-card" href="iara.html">
+            <div class="sub-badge" style="background:#EAF3DE; color:#3B6D11;">IARA</div>
+            <div class="sub-name">Quadratica</div>
+            <div class="sub-desc">ARA crescente · U(c) = c − (φ/2)c²</div>
+            <div class="sub-arrow">→</div>
+          </a>
+
+          <a class="sub-card" href="hara.html">
+            <div class="sub-badge" style="background:#E6F1FB; color:#185FA5;">HARA</div>
+            <div class="sub-name">Generalizzata</div>
+            <div class="sub-desc">ARA iperbolica · generalizza tutte</div>
+            <div class="sub-arrow">→</div>
+          </a>
+
+        </div>
+
+        <div class="topic-row locked">
+          <div class="topic-num">2.3</div>
+          <div class="topic-info">
+            <div class="topic-name">Calibrazione e dati</div>
+            <div class="topic-sub">Momenti empirici del consumo USA. Autocorrelazione, media e deviazione standard come input del modello</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PARTE III -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">Parte III</div>
+        <div class="section-title">Modelli Macro-Finance Applicati</div>
+        <div class="section-desc">Simulazione e confronto con i dati reali. L'equity premium puzzle e i tentativi di risolverlo</div>
+      </div>
+      <div class="topics">
+
+        <a class="topic-row clickable" href="mehra_prescott.html">
+          <div class="topic-num">3.1</div>
+          <div class="topic-info">
+            <div class="topic-name">Mehra &amp; Prescott (1985)</div>
+            <div class="topic-sub">Il modello a due stati di Markov. Calibrazione sui dati USA. L'equity premium puzzle e il risk-free rate puzzle</div>
+          </div>
+          <div class="topic-tags">
+            <span class="tag tag-wip">In preparazione</span>
+            <span class="tag tag-key">Fondamentale</span>
+          </div>
+          <div class="topic-arrow">→</div>
+        </a>
+
+        <div class="topic-row locked">
+          <div class="topic-num">3.2</div>
+          <div class="topic-info">
+            <div class="topic-name">Weil (1989) — Preferenze Ricorsive</div>
+            <div class="topic-sub">Epstein-Zin utility. Separazione tra avversione al rischio (γ) ed elasticità di sostituzione intertemporale (1/ρ)</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+        <div class="topic-row locked">
+          <div class="topic-num">3.3</div>
+          <div class="topic-info">
+            <div class="topic-name">Rare Disasters</div>
+            <div class="topic-sub">Rietz (1988), Barro-Jin (2021). Terzo stato di natura per eventi catastrofici. Effetto sui premi al rischio</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+        <div class="topic-row locked">
+          <div class="topic-num">3.4</div>
+          <div class="topic-info">
+            <div class="topic-name">Habit Formation e modelli confidence-based</div>
+            <div class="topic-sub">Abel (1990), Campbell-Cochrane (1999), Merella-Satchell (2023). Avversione al rischio variabile nel tempo</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PARTE IV -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">Parte IV</div>
+        <div class="section-title">Approccio Generalizzato</div>
+        <div class="section-desc">Dalla teoria economica ai modelli fattoriali. Il SDF come variabile aleatoria generica</div>
+      </div>
+      <div class="topics">
+
+        <div class="topic-row locked">
+          <div class="topic-num">4.1</div>
+          <div class="topic-info">
+            <div class="topic-name">Mean-Variance Frontier e Sharpe Ratio</div>
+            <div class="topic-sub">Hansen-Jagannathan bound. Il SDF e la frontiera di Markowitz. Equazione di Hansen-Jagannathan</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+        <div class="topic-row locked">
+          <div class="topic-num">4.2</div>
+          <div class="topic-info">
+            <div class="topic-name">Mercati completi e incompleti</div>
+            <div class="topic-sub">Arrow-Debreu securities. Prezzi dei titoli contingenti. Condizioni di esistenza e unicità dello SDF</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PARTE V -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-num">Parte V</div>
+        <div class="section-title">Modelli Fattoriali e CAPM</div>
+        <div class="section-desc">Approcci alternativi basati su fattori di rischio osservabili</div>
+      </div>
+      <div class="topics">
+
+        <div class="topic-row locked">
+          <div class="topic-num">5.1</div>
+          <div class="topic-info">
+            <div class="topic-name">Capital Asset Pricing Model (CAPM)</div>
+            <div class="topic-sub">SDF lineare nel rendimento di mercato. Beta e market risk. Derivazione dalla IARA e dalla frontiera MV</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+        <div class="topic-row locked">
+          <div class="topic-num">5.2</div>
+          <div class="topic-info">
+            <div class="topic-name">Arbitrage Pricing Theory (APT)</div>
+            <div class="topic-sub">Fattori multipli di rischio. State variables e forecast variables. Confronto con il CAPM</div>
+          </div>
+          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <span>Asset Pricing — Materiale Interattivo</span>
+  <span>Le pagine <em>disponibili</em> contengono grafici interattivi e formule renderizzate</span>
+</footer>
+
 </body>
 </html>
