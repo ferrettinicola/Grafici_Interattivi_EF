@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARA — Funzione di Utilità Generalizzata</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #fff; color: #1a1a1a; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #888; text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+  .back-link:hover { color: #333; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #E6F1FB; color: #185FA5; margin-bottom: 0.6rem; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.3rem; letter-spacing: -0.3px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.75rem; }
+
+  .explanation {
+    background: #fafaf8;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .expl-block h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #888; margin-bottom: 0.5rem; }
+  .expl-block p { font-size: 13px; color: #444; line-height: 1.65; }
+  .expl-block .formula { font-family: 'Courier New', monospace; font-size: 12px; background: #fff; border: 1px solid #e8e6e0; border-radius: 6px; padding: 6px 10px; margin-top: 0.5rem; display: inline-block; }
+  .props { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.6rem; }
+  .prop { font-size: 11px; color: #185FA5; background: #E6F1FB; border-radius: 5px; padding: 3px 8px; font-weight: 500; }
+
+  .special-cases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .case-btn {
+    background: #f5f4f0;
+    border: 1px solid #e8e6e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .case-btn:hover { background: #eeede8; }
+  .case-btn.active { background: #E6F1FB; border-color: #B5D4F4; }
+  .case-btn .cb-label { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #888; margin-bottom: 3px; }
+  .case-btn .cb-name { font-size: 13px; font-weight: 500; }
+  .case-btn .cb-sub { font-size: 10px; color: #999; margin-top: 2px; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .card { background: #f5f4f0; border-radius: 8px; padding: 10px 14px; }
+  .card-label { font-size: 11px; color: #888; margin-bottom: 3px; }
+  .card-value { font-size: 20px; font-weight: 500; }
+  .formula-box { background: #f5f4f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 1.25rem; text-align: center; }
+  #formula-text { font-size: 15px; font-weight: 500; font-family: 'Courier New', monospace; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 1.25rem; }
+  .control-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .control-label span.lbl { font-size: 12px; color: #666; }
+  .control-label span.val { font-size: 13px; font-weight: 500; }
+  .tick-row { display: flex; justify-content: space-between; font-size: 10px; color: #aaa; margin-top: 2px; }
+  input[type=range] { width: 100%; accent-color: #185FA5; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .chart-legend { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .chart-line { width: 14px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+  .chart-legend span { font-size: 12px; color: #666; font-weight: 500; }
+  .chart-wrap { position: relative; height: 200px; }
+  .chart-formula { font-size: 10px; color: #999; margin-top: 4px; font-family: 'Courier New', monospace; }
+
+  .insight-box {
+    margin-top: 1.5rem;
+    background: #E6F1FB;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    color: #0C447C;
+    line-height: 1.65;
+  }
+  .insight-box strong { font-weight: 600; }
+
+  @media (max-width: 640px) {
+    .explanation { grid-template-columns: 1fr; }
+    .special-cases { grid-template-columns: 1fr 1fr; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .controls { grid-template-columns: 1fr; }
+    .charts { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">← Torna alla home</a>
+
+<div class="badge">HARA</div>
+<h1>Funzione di Utilità Generalizzata</h1>
+<p class="subtitle">Hyperbolic Absolute Risk Aversion — include CRRA, CARA e IARA come casi speciali</p>
+
+<div class="explanation">
+  <div class="expl-block">
+    <h3>Significato economico</h3>
+    <p>La HARA è la <strong>forma più generale</strong> di funzione di utilità con avversione iperbolica. Unifica CRRA, CARA e IARA in un'unica espressione a due parametri (γ, φ), permettendo di modellare una vastissima gamma di comportamenti al rischio.</p>
+    <div class="props">
+      <span class="prop">Generalizza CRRA, CARA, IARA</span>
+      <span class="prop">Due parametri γ, φ</span>
+    </div>
+  </div>
+  <div class="expl-block">
+    <h3>Formula e coefficienti</h3>
+    <div class="formula">U(c) = (c + γ/φ)^(1−γ) / (1−γ)</div>
+    <p style="margin-top:0.6rem;">L'ARA è <em>iperbolica</em> in c: A(c) = 1/(c/γ + 1/φ). Cambiando i parametri si ottengono tutti i casi speciali: γ→1 dà log utility, φ→∞ dà CRRA pura, |γ/φ|→0 si avvicina alla CARA.</p>
+  </div>
+</div>
+
+<div style="margin-bottom:0.6rem; font-size:12px; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Casi speciali — clicca per pre-impostare i parametri</div>
+<div class="special-cases">
+  <button class="case-btn" id="btn-crra" onclick="setPreset('crra')">
+    <div class="cb-label">CRRA</div>
+    <div class="cb-name">Isoelastica</div>
+    <div class="cb-sub">γ=2, φ=100 (≈∞)</div>
+  </button>
+  <button class="case-btn" id="btn-cara" onclick="setPreset('cara')">
+    <div class="cb-label">CARA</div>
+    <div class="cb-name">Esponenziale</div>
+    <div class="cb-sub">γ→0, φ=1</div>
+  </button>
+  <button class="case-btn" id="btn-custom" onclick="setPreset('custom')">
+    <div class="cb-label">Custom</div>
+    <div class="cb-name">Personalizzato</div>
+    <div class="cb-sub">Regola i cursori</div>
+  </button>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">γ (gamma)</div>
+    <div class="card-value" id="card-gamma" style="color:#185FA5;">2.0</div>
+  </div>
+  <div class="card">
+    <div class="card-label">φ (phi)</div>
+    <div class="card-value" id="card-phi" style="color:#BA7517;">1.0</div>
+  </div>
+  <div class="card">
+    <div class="card-label">ARA a c=1</div>
+    <div class="card-value" id="card-ara" style="color:#D85A30;">—</div>
+  </div>
+  <div class="card">
+    <div class="card-label">RRA a c=1</div>
+    <div class="card-value" id="card-rra" style="color:#639922;">—</div>
+  </div>
+</div>
+
+<div class="formula-box">
+  <p id="formula-text"></p>
+</div>
+
+<div class="controls">
+  <div>
+    <div class="control-label">
+      <span class="lbl">γ — avversione relativa</span>
+      <span class="val" id="gamma-val" style="color:#185FA5;">2.0</span>
+    </div>
+    <input type="range" id="gamma" min="0.5" max="5" step="0.1" value="2">
+    <div class="tick-row"><span>0.5</span><span>γ=1</span><span>5</span></div>
+  </div>
+  <div>
+    <div class="control-label">
+      <span class="lbl">φ — scala assoluta</span>
+      <span class="val" id="phi-val" style="color:#BA7517;">1.0</span>
+    </div>
+    <input type="range" id="phi" min="0.1" max="5" step="0.1" value="1">
+    <div class="tick-row"><span>0.1</span><span>1</span><span>5</span></div>
+  </div>
+  <div>
+    <div class="control-label">
+      <span class="lbl">Ricchezza massima c</span>
+      <span class="val" id="cmax-val">5</span>
+    </div>
+    <input type="range" id="cmax" min="1" max="20" step="0.5" value="5">
+    <div class="tick-row"><span>1</span><span>20</span></div>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#185FA5;"></div>
+      <span>U(c) — Funzione di utilità HARA</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+    <p class="chart-formula">U(c) = (c + γ/φ)^(1−γ) / (1−γ)</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#1D9E75;"></div>
+      <span>U''(c) — Derivata seconda</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+    <p class="chart-formula">U''(c) = −γ·(c+γ/φ)^(−γ−1) &lt; 0</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#D85A30;"></div>
+      <span>A(c) — ARA iperbolica</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+    <p class="chart-formula">A(c) = 1/(c/γ + 1/φ) = γφ/(φc+γ)</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#639922;"></div>
+      <span>R(c) — RRA</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart4"></canvas></div>
+    <p class="chart-formula">R(c) = c · A(c) = γφc/(φc+γ)</p>
+  </div>
+</div>
+
+<div class="insight-box" id="insight-box"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function computeData(gamma, phi, cmax) {
+  const N = 90;
+  const shift = gamma / phi;
+  const cs = Array.from({length: N}, (_, i) => 0.05 + (cmax - 0.05) * i / (N - 1));
+  const isLog = Math.abs(gamma - 1) < 0.015;
+  const U  = cs.map(c => {
+    const x = c + shift;
+    if (x <= 0) return null;
+    return isLog ? Math.log(x) : Math.pow(x, 1 - gamma) / (1 - gamma);
+  });
+  const U2 = cs.map(c => {
+    const x = c + shift;
+    if (x <= 0) return null;
+    return -gamma * Math.pow(x, -gamma - 1);
+  });
+  const ARA = cs.map(c => gamma * phi / (phi * c + gamma));
+  const RRA = cs.map(c => gamma * phi * c / (phi * c + gamma));
+  return { cs, U, U2, ARA, RRA };
+}
+
+function mkPts(cs, ys) {
+  return cs.map((c, i) => ys[i] == null ? null : ({ x: parseFloat(c.toFixed(3)), y: parseFloat(ys[i].toFixed(5)) })).filter(Boolean);
+}
+
+function makeChart(id, color) {
+  return new Chart(document.getElementById(id), {
+    type: 'scatter',
+    data: { datasets: [{ showLine: true, data: [], borderColor: color, backgroundColor: color + '12', fill: true, tension: 0.25, pointRadius: 0, borderWidth: 2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 120 },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `c=${ctx.parsed.x.toFixed(2)}  val=${ctx.parsed.y.toFixed(3)}` } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'c', font: { size: 10 }, color: '#888780' }, ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(1)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } },
+        y: { ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(3)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } }
+      }
+    }
+  });
+}
+
+const charts = {
+  c1: makeChart('chart1', '#185FA5'),
+  c2: makeChart('chart2', '#1D9E75'),
+  c3: makeChart('chart3', '#D85A30'),
+  c4: makeChart('chart4', '#639922')
+};
+
+function setData(ch, pts) { ch.data.datasets[0].data = pts; ch.update('none'); }
+
+const presets = {
+  crra:   { gamma: 2.0, phi: 5.0, label: 'CRRA', btn: 'btn-crra' },
+  cara:   { gamma: 0.5, phi: 1.0, label: 'CARA-like', btn: 'btn-cara' },
+  custom: { gamma: 2.0, phi: 1.0, label: 'Custom', btn: 'btn-custom' }
+};
+
+function setPreset(name) {
+  const p = presets[name];
+  document.getElementById('gamma').value = p.gamma;
+  document.getElementById('phi').value   = p.phi;
+  document.querySelectorAll('.case-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(p.btn).classList.add('active');
+  update();
+}
+
+function getInsight(gamma, phi, cmax) {
+  const araAt1 = (gamma * phi / (phi + gamma)).toFixed(3);
+  const rraAt1 = (gamma * phi / (phi + gamma)).toFixed(3);
+  const araAtMax = (gamma * phi / (phi * cmax + gamma)).toFixed(3);
+  let desc = '';
+  if (araAt1 > araAtMax) desc = 'L\'ARA <em>decresce</em> con c (DARA — simile alla CRRA).';
+  else if (Math.abs(parseFloat(araAt1) - parseFloat(araAtMax)) < 0.01) desc = 'L\'ARA è quasi <em>costante</em> (simile alla CARA).';
+  else desc = 'L\'ARA <em>cresce</em> con c (simile alla IARA).';
+  return `<strong>HARA con γ = ${gamma.toFixed(1)}, φ = ${phi.toFixed(1)}:</strong> A(c=1) = ${araAt1}, R(c=1) = ${rraAt1}. ${desc} La formula HARA si riduce a CRRA quando il termine γ/φ domina (φ grande), e si avvicina alla CARA quando γ è piccolo e φ è moderato. Questo la rende la forma più flessibile per modellare preferenze eterogenee.`;
+}
+
+function update() {
+  const gamma = parseFloat(document.getElementById('gamma').value);
+  const phi   = parseFloat(document.getElementById('phi').value);
+  const cmax  = parseFloat(document.getElementById('cmax').value);
+
+  document.getElementById('gamma-val').textContent = gamma.toFixed(1);
+  document.getElementById('phi-val').textContent   = phi.toFixed(1);
+  document.getElementById('cmax-val').textContent  = cmax;
+  document.getElementById('card-gamma').textContent = gamma.toFixed(1);
+  document.getElementById('card-phi').textContent   = phi.toFixed(1);
+
+  const araAt1 = gamma * phi / (phi + gamma);
+  const rraAt1 = gamma * phi / (phi + gamma);
+  document.getElementById('card-ara').textContent = araAt1.toFixed(3);
+  document.getElementById('card-rra').textContent = rraAt1.toFixed(3);
+
+  const shift = (gamma / phi).toFixed(3);
+  document.getElementById('formula-text').textContent =
+    `U(c) = (c + ${shift})^(${(1-gamma).toFixed(1)}) / ${(1-gamma).toFixed(1)}`;
+
+  document.getElementById('insight-box').innerHTML = getInsight(gamma, phi, cmax);
+  const { cs, U, U2, ARA, RRA } = computeData(gamma, phi, cmax);
+  setData(charts.c1, mkPts(cs, U));
+  setData(charts.c2, mkPts(cs, U2));
+  setData(charts.c3, mkPts(cs, ARA));
+  setData(charts.c4, mkPts(cs, RRA));
+}
+
+document.getElementById('gamma').addEventListener('input', () => {
+  document.querySelectorAll('.case-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-custom').classList.add('active');
+  update();
+});
+document.getElementById('phi').addEventListener('input', () => {
+  document.querySelectorAll('.case-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-custom').classList.add('active');
+  update();
+});
+document.getElementById('cmax').addEventListener('input', update);
+
+setPreset('custom');
+</script>
+</body>
+</html>

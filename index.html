@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funzioni di Utilità — Asset Pricing</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #fafaf8;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .container { max-width: 820px; width: 100%; }
+  .header { margin-bottom: 2.5rem; }
+  .header h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+  .header p { font-size: 15px; color: #666; line-height: 1.6; max-width: 560px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .card {
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+    cursor: pointer;
+    display: block;
+  }
+  .card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    border-color: #ccc;
+  }
+  .card-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .badge-crra { background: #EEEDFE; color: #534AB7; }
+  .badge-cara { background: #FAECE7; color: #993C1D; }
+  .badge-iara { background: #EAF3DE; color: #3B6D11; }
+  .badge-hara { background: #E6F1FB; color: #185FA5; }
+
+  .card-title { font-size: 19px; font-weight: 600; margin-bottom: 0.35rem; letter-spacing: -0.3px; }
+  .card-subtitle { font-size: 12px; color: #999; font-weight: 500; margin-bottom: 0.85rem; letter-spacing: 0.3px; }
+  .card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 1.1rem; }
+  .card-props { display: flex; gap: 8px; flex-wrap: wrap; }
+  .prop { font-size: 11px; color: #777; background: #f5f4f0; border-radius: 5px; padding: 3px 8px; }
+  .card-arrow {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    font-size: 18px;
+    color: #bbb;
+    transition: color 0.15s, transform 0.15s;
+  }
+  .card:hover .card-arrow { color: #555; transform: translateX(3px); }
+  .footer { margin-top: 2.5rem; text-align: center; font-size: 12px; color: #bbb; }
+
+  @media (max-width: 580px) {
+    .grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Funzioni di Utilità</h1>
+    <p>Esplora interattivamente le principali funzioni di utilità usate in Asset Pricing. Ogni pagina mostra grafici dinamici e spiegazioni economiche.</p>
+  </div>
+
+  <div class="grid">
+
+    <a class="card" href="crra.html">
+      <div class="card-badge badge-crra">CRRA</div>
+      <div class="card-title">Isoelastica</div>
+      <div class="card-subtitle">Constant Relative Risk Aversion</div>
+      <div class="card-desc">Il rischio è valutato in proporzione alla ricchezza. Al crescere del patrimonio, l'avversione relativa resta costante mentre quella assoluta diminuisce.</div>
+      <div class="card-props">
+        <span class="prop">ARA decrescente</span>
+        <span class="prop">RRA costante = γ</span>
+        <span class="prop">Empiricamente realistica</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="card" href="cara.html">
+      <div class="card-badge badge-cara">CARA</div>
+      <div class="card-title">Esponenziale</div>
+      <div class="card-subtitle">Constant Absolute Risk Aversion</div>
+      <div class="card-desc">Il rischio è valutato in termini assoluti. La cifra pagata per evitare un rischio non dipende dal livello di ricchezza dell'investitore.</div>
+      <div class="card-props">
+        <span class="prop">ARA costante = φ</span>
+        <span class="prop">RRA crescente</span>
+        <span class="prop">Utile con rendimenti normali</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="card" href="iara.html">
+      <div class="card-badge badge-iara">IARA</div>
+      <div class="card-title">Quadratica</div>
+      <div class="card-subtitle">Increasing Absolute Risk Aversion</div>
+      <div class="card-desc">L'avversione al rischio cresce con la ricchezza, sia in termini assoluti che relativi. Utile per derivare il CAPM ma poco realistica empiricamente.</div>
+      <div class="card-props">
+        <span class="prop">ARA crescente</span>
+        <span class="prop">RRA crescente</span>
+        <span class="prop">Base per il CAPM</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="card" href="hara.html">
+      <div class="card-badge badge-hara">HARA</div>
+      <div class="card-title">Generalizzata</div>
+      <div class="card-subtitle">Hyperbolic Absolute Risk Aversion</div>
+      <div class="card-desc">Forma generale che include CRRA, CARA e IARA come casi speciali. Offre la massima flessibilità nella modellazione delle preferenze al rischio.</div>
+      <div class="card-props">
+        <span class="prop">ARA iperbolica</span>
+        <span class="prop">Generalizza tutte</span>
+        <span class="prop">Due parametri γ, φ</span>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="footer">Asset Pricing · Funzioni di Utilità Interattive</div>
+</div>
+</body>
+</html>

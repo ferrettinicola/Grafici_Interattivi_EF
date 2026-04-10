@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRRA — Funzione di Utilità Isoelastica</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #fff; color: #1a1a1a; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #888; text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+  .back-link:hover { color: #333; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #EEEDFE; color: #534AB7; margin-bottom: 0.6rem; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.3rem; letter-spacing: -0.3px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.75rem; }
+
+  .explanation {
+    background: #fafaf8;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .expl-block h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #888; margin-bottom: 0.5rem; }
+  .expl-block p { font-size: 13px; color: #444; line-height: 1.65; }
+  .expl-block .formula { font-family: 'Courier New', monospace; font-size: 13px; background: #fff; border: 1px solid #e8e6e0; border-radius: 6px; padding: 6px 10px; margin-top: 0.5rem; display: inline-block; }
+  .props { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.6rem; }
+  .prop { font-size: 11px; color: #534AB7; background: #EEEDFE; border-radius: 5px; padding: 3px 8px; font-weight: 500; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .card { background: #f5f4f0; border-radius: 8px; padding: 10px 14px; }
+  .card-label { font-size: 11px; color: #888; margin-bottom: 3px; }
+  .card-value { font-size: 22px; font-weight: 500; }
+  .formula-box { background: #f5f4f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 1.25rem; text-align: center; }
+  #formula-text { font-size: 18px; font-weight: 500; font-family: 'Courier New', monospace; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 1.25rem; }
+  .control-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .control-label span.lbl { font-size: 13px; color: #666; }
+  .control-label span.val { font-size: 13px; font-weight: 500; }
+  .tick-row { display: flex; justify-content: space-between; font-size: 10px; color: #aaa; margin-top: 2px; }
+  input[type=range] { width: 100%; accent-color: #534AB7; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .chart-block {}
+  .chart-legend { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .chart-line { width: 14px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+  .chart-legend span { font-size: 12px; color: #666; font-weight: 500; }
+  .chart-wrap { position: relative; height: 200px; }
+  .chart-formula { font-size: 10px; color: #999; margin-top: 4px; font-family: 'Courier New', monospace; }
+
+  .insight-box {
+    margin-top: 1.5rem;
+    background: #EEEDFE;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    color: #3C3489;
+    line-height: 1.65;
+  }
+  .insight-box strong { font-weight: 600; }
+
+  @media (max-width: 580px) {
+    .explanation { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .controls { grid-template-columns: 1fr; }
+    .charts { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">← Torna alla home</a>
+
+<div class="badge">CRRA</div>
+<h1>Funzione di Utilità Isoelastica</h1>
+<p class="subtitle">Constant Relative Risk Aversion — l'avversione relativa al rischio è costante rispetto alla ricchezza</p>
+
+<div class="explanation">
+  <div class="expl-block">
+    <h3>Significato economico</h3>
+    <p>L'investitore valuta il rischio sempre in <strong>proporzione</strong> alla propria ricchezza. Se è disposto a rischiare il 10% del patrimonio oggi, sarà disposto a farlo anche se il patrimonio raddoppia — la quota percentuale non cambia mai.</p>
+    <div class="props">
+      <span class="prop">ARA = γ/c ↓ decresce</span>
+      <span class="prop">RRA = γ costante</span>
+    </div>
+  </div>
+  <div class="expl-block">
+    <h3>Formula e coefficienti</h3>
+    <div class="formula">U(c) = c^(1−γ) / (1−γ)</div>
+    <p style="margin-top:0.6rem;">L'ARA (avversione assoluta) decresce con c: i ricchi rischiano <em>più euro</em> ma sempre la stessa <em>percentuale</em>. Con γ > 1 la curva di utilità assume valori negativi (IV quadrante) — artefatto algebrico, non economico.</p>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">γ (gamma)</div>
+    <div class="card-value" id="card-gamma" style="color:#534AB7;">2.0</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Tipo</div>
+    <div class="card-value" id="card-type" style="font-size:13px; padding-top:5px;">Fortemente risk averse</div>
+  </div>
+  <div class="card">
+    <div class="card-label">RRA (costante)</div>
+    <div class="card-value" id="card-rra" style="color:#BA7517;">2.00</div>
+  </div>
+  <div class="card">
+    <div class="card-label">ARA a c=1</div>
+    <div class="card-value" id="card-ara" style="color:#D85A30;">2.00</div>
+  </div>
+</div>
+
+<div class="formula-box">
+  <p id="formula-text"></p>
+</div>
+
+<div class="controls">
+  <div>
+    <div class="control-label">
+      <span class="lbl">Coefficiente di avversione al rischio γ</span>
+      <span class="val" id="gamma-val" style="color:#534AB7;">2.0</span>
+    </div>
+    <input type="range" id="gamma" min="0.1" max="5" step="0.1" value="2">
+    <div class="tick-row"><span>0.1</span><span>risk neutro γ=1</span><span>5</span></div>
+  </div>
+  <div>
+    <div class="control-label">
+      <span class="lbl">Ricchezza massima c</span>
+      <span class="val" id="cmax-val">10</span>
+    </div>
+    <input type="range" id="cmax" min="2" max="30" step="1" value="10">
+    <div class="tick-row"><span>2</span><span>30</span></div>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#534AB7;"></div>
+      <span>U(c) — Funzione di utilità CRRA</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+    <p class="chart-formula">U(c) = c^(1−γ) / (1−γ)</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#1D9E75;"></div>
+      <span>U''(c) — Derivata seconda</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+    <p class="chart-formula">U''(c) = −γ · c^(−γ−1) &lt; 0</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#D85A30;"></div>
+      <span>A(c) = γ/c — ARA (Arrow-Pratt)</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+    <p class="chart-formula">A(c) = −U''(c)/U'(c) → DARA</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#BA7517;"></div>
+      <span>R(c) = γ — RRA (relativa, costante)</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart4"></canvas></div>
+    <p class="chart-formula">R(c) = −c·U''(c)/U'(c) = γ (CRRA)</p>
+  </div>
+</div>
+
+<div class="insight-box" id="insight-box"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function computeData(gamma, cmax) {
+  const N = 90;
+  const cs = Array.from({length: N}, (_, i) => 0.05 + (cmax - 0.05) * i / (N - 1));
+  const isLog = Math.abs(gamma - 1) < 0.015;
+  const U   = cs.map(c => isLog ? Math.log(c) : Math.pow(c, 1 - gamma) / (1 - gamma));
+  const U2  = cs.map(c => -gamma * Math.pow(c, -gamma - 1));
+  const ARA = cs.map(c => gamma / c);
+  const RRA = cs.map(() => gamma);
+  return { cs, U, U2, ARA, RRA };
+}
+
+function mkPts(cs, ys) {
+  return cs.map((c, i) => ({ x: parseFloat(c.toFixed(3)), y: parseFloat(ys[i].toFixed(5)) }));
+}
+
+function makeChart(id, color, fillAlpha) {
+  const alpha = Math.round(fillAlpha * 255).toString(16).padStart(2,'0');
+  return new Chart(document.getElementById(id), {
+    type: 'scatter',
+    data: { datasets: [{ showLine: true, data: [], borderColor: color, backgroundColor: color + alpha, fill: true, tension: 0.25, pointRadius: 0, borderWidth: 2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 120 },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `c=${ctx.parsed.x.toFixed(2)}  val=${ctx.parsed.y.toFixed(3)}` } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'c', font: { size: 10 }, color: '#888780' }, ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(1)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } },
+        y: { ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(2)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } }
+      }
+    }
+  });
+}
+
+const charts = {
+  c1: makeChart('chart1', '#534AB7', 0.07),
+  c2: makeChart('chart2', '#1D9E75', 0.07),
+  c3: makeChart('chart3', '#D85A30', 0.07),
+  c4: makeChart('chart4', '#BA7517', 0.07)
+};
+
+function setData(ch, pts) { ch.data.datasets[0].data = pts; ch.update('none'); }
+
+function getType(g) {
+  if (Math.abs(g - 1) < 0.015) return 'Log utility (γ = 1)';
+  if (g < 1) return 'Debolmente risk averse';
+  if (g <= 2) return 'Moderatamente risk averse';
+  return 'Fortemente risk averse';
+}
+
+function getFormula(g) {
+  if (Math.abs(g - 1) < 0.015) return 'U(c) = ln(c)';
+  const e = (1 - g).toFixed(2);
+  const d = (1 - g).toFixed(2);
+  return 'U(c) = c^(' + e + ') / (' + d + ')';
+}
+
+function getInsight(g) {
+  if (Math.abs(g - 1) < 0.015)
+    return '<strong>γ = 1 (Log utility):</strong> caso limite della CRRA. La funzione diventa U(c) = ln(c). L\'ARA = 1/c decresce, la RRA = 1 è costante. Molto usata per la sua semplicità analitica.';
+  if (g < 1)
+    return `<strong>γ = ${g.toFixed(1)} < 1:</strong> avversione moderata. U(c) > 0 per c > 0 (I quadrante). L'investitore è relativamente flessibile: accetta rischi proporzionali purché il rendimento atteso li compensi.`;
+  return `<strong>γ = ${g.toFixed(1)} > 1:</strong> avversione elevata. U(c) < 0 per tutto il dominio (IV quadrante) — artefatto algebrico del denominatore negativo. Economicamente, l'investitore è molto sensibile alle perdite relative di consumo.`;
+}
+
+function update() {
+  const gamma = parseFloat(document.getElementById('gamma').value);
+  const cmax  = parseFloat(document.getElementById('cmax').value);
+  document.getElementById('gamma-val').textContent    = gamma.toFixed(1);
+  document.getElementById('cmax-val').textContent     = cmax;
+  document.getElementById('card-gamma').textContent   = gamma.toFixed(1);
+  document.getElementById('card-rra').textContent     = gamma.toFixed(2);
+  document.getElementById('card-ara').textContent     = gamma.toFixed(2);
+  document.getElementById('card-type').textContent    = getType(gamma);
+  document.getElementById('formula-text').textContent = getFormula(gamma);
+  document.getElementById('insight-box').innerHTML    = getInsight(gamma);
+  const { cs, U, U2, ARA, RRA } = computeData(gamma, cmax);
+  setData(charts.c1, mkPts(cs, U));
+  setData(charts.c2, mkPts(cs, U2));
+  setData(charts.c3, mkPts(cs, ARA));
+  setData(charts.c4, mkPts(cs, RRA));
+}
+
+document.getElementById('gamma').addEventListener('input', update);
+document.getElementById('cmax').addEventListener('input', update);
+update();
+</script>
+</body>
+</html>

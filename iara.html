@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IARA — Funzione di Utilità Quadratica</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #fff; color: #1a1a1a; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #888; text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+  .back-link:hover { color: #333; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #EAF3DE; color: #3B6D11; margin-bottom: 0.6rem; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.3rem; letter-spacing: -0.3px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.75rem; }
+
+  .explanation {
+    background: #fafaf8;
+    border: 1px solid #e8e6e0;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .expl-block h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #888; margin-bottom: 0.5rem; }
+  .expl-block p { font-size: 13px; color: #444; line-height: 1.65; }
+  .expl-block .formula { font-family: 'Courier New', monospace; font-size: 13px; background: #fff; border: 1px solid #e8e6e0; border-radius: 6px; padding: 6px 10px; margin-top: 0.5rem; display: inline-block; }
+  .props { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.6rem; }
+  .prop { font-size: 11px; color: #3B6D11; background: #EAF3DE; border-radius: 5px; padding: 3px 8px; font-weight: 500; }
+
+  .warning-banner {
+    background: #FAEEDA;
+    border: 1px solid #FAC775;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 13px;
+    color: #633806;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .warning-banner .icon { font-size: 16px; flex-shrink: 0; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .card { background: #f5f4f0; border-radius: 8px; padding: 10px 14px; }
+  .card-label { font-size: 11px; color: #888; margin-bottom: 3px; }
+  .card-value { font-size: 22px; font-weight: 500; }
+  .formula-box { background: #f5f4f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 1.25rem; text-align: center; }
+  #formula-text { font-size: 18px; font-weight: 500; font-family: 'Courier New', monospace; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 1.25rem; }
+  .control-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .control-label span.lbl { font-size: 13px; color: #666; }
+  .control-label span.val { font-size: 13px; font-weight: 500; }
+  .tick-row { display: flex; justify-content: space-between; font-size: 10px; color: #aaa; margin-top: 2px; }
+  input[type=range] { width: 100%; accent-color: #639922; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .chart-legend { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .chart-line { width: 14px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+  .chart-legend span { font-size: 12px; color: #666; font-weight: 500; }
+  .chart-wrap { position: relative; height: 200px; }
+  .chart-formula { font-size: 10px; color: #999; margin-top: 4px; font-family: 'Courier New', monospace; }
+
+  .insight-box {
+    margin-top: 1.5rem;
+    background: #EAF3DE;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    color: #27500A;
+    line-height: 1.65;
+  }
+  .insight-box strong { font-weight: 600; }
+
+  @media (max-width: 580px) {
+    .explanation { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .controls { grid-template-columns: 1fr; }
+    .charts { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">← Torna alla home</a>
+
+<div class="badge">IARA</div>
+<h1>Funzione di Utilità Quadratica</h1>
+<p class="subtitle">Increasing Absolute Risk Aversion — l'avversione assoluta al rischio cresce con la ricchezza</p>
+
+<div class="explanation">
+  <div class="expl-block">
+    <h3>Significato economico</h3>
+    <p>L'investitore diventa <strong>più avverso al rischio</strong> man mano che accumula ricchezza — sia in termini assoluti che relativi. Un milionario che teme di più rispetto a un lavoratore comune di perdere €100 è il profilo descritto da questa funzione.</p>
+    <div class="props">
+      <span class="prop">ARA = φ/(1−φc) crescente</span>
+      <span class="prop">RRA = φc/(1−φc) crescente</span>
+    </div>
+  </div>
+  <div class="expl-block">
+    <h3>Formula e vincoli</h3>
+    <div class="formula">U(c) = c − (φ/2)·c²</div>
+    <p style="margin-top:0.6rem;">Valida <strong>solo per c &lt; 1/φ</strong>. Oltre questa soglia, U'(c) diventa negativa — consumare di più farebbe star peggio, economicamente assurdo. Questo vincolo strutturale, insieme all'irrealismo dell'IARA, la rende poco usata, ma è la base per derivare il CAPM.</p>
+  </div>
+</div>
+
+<div class="warning-banner" id="warning-banner" style="display:none;">
+  <span class="icon">⚠</span>
+  <span id="warning-text"></span>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">φ (phi)</div>
+    <div class="card-value" id="card-phi" style="color:#639922;">0.5</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Limite c &lt; 1/φ</div>
+    <div class="card-value" id="card-limit" style="color:#BA7517;">2.00</div>
+  </div>
+  <div class="card">
+    <div class="card-label">ARA a c=0.5·(1/φ)</div>
+    <div class="card-value" id="card-ara" style="color:#D85A30;">—</div>
+  </div>
+  <div class="card">
+    <div class="card-label">RRA a c=0.5·(1/φ)</div>
+    <div class="card-value" id="card-rra" style="color:#BA7517;">—</div>
+  </div>
+</div>
+
+<div class="formula-box">
+  <p id="formula-text">U(c) = c − 0.25·c²</p>
+</div>
+
+<div class="controls">
+  <div>
+    <div class="control-label">
+      <span class="lbl">Coefficiente quadratico φ</span>
+      <span class="val" id="phi-val" style="color:#639922;">0.5</span>
+    </div>
+    <input type="range" id="phi" min="0.1" max="2" step="0.05" value="0.5">
+    <div class="tick-row"><span>0.1</span><span>1</span><span>2</span></div>
+  </div>
+  <div>
+    <div class="control-label">
+      <span class="lbl">Ricchezza massima c (nel grafico)</span>
+      <span class="val" id="cmax-val">3</span>
+    </div>
+    <input type="range" id="cmax" min="0.5" max="10" step="0.5" value="3">
+    <div class="tick-row"><span>0.5</span><span>10</span></div>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#639922;"></div>
+      <span>U(c) — Zona valida</span>
+      <div class="chart-line" style="background:#E24B4A; margin-left:8px;"></div>
+      <span>U(c) — Zona proibita (U'&lt;0)</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+    <p class="chart-formula">U(c) = c − (φ/2)·c², valida per c &lt; 1/φ</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#1D9E75;"></div>
+      <span>U''(c) — Derivata seconda (costante)</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+    <p class="chart-formula">U''(c) = −φ (costante negativa)</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#D85A30;"></div>
+      <span>A(c) = φ/(1−φc) — ARA crescente</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+    <p class="chart-formula">A(c) = −U''(c)/U'(c) = φ/(1−φc) → ∞</p>
+  </div>
+  <div class="chart-block">
+    <div class="chart-legend">
+      <div class="chart-line" style="background:#BA7517;"></div>
+      <span>R(c) = φc/(1−φc) — RRA crescente</span>
+    </div>
+    <div class="chart-wrap"><canvas id="chart4"></canvas></div>
+    <p class="chart-formula">R(c) = c · A(c) = φc/(1−φc) → ∞</p>
+  </div>
+</div>
+
+<div class="insight-box" id="insight-box"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function computeData(phi, cmax) {
+  const N = 100;
+  const limit = 1 / phi;
+  const cs = Array.from({length: N}, (_, i) => 0.02 + cmax * i / (N - 1));
+
+  const U_valid = [], U_invalid = [];
+  cs.forEach(c => {
+    const u = c - (phi / 2) * c * c;
+    if (c < limit - 0.001) { U_valid.push(u); U_invalid.push(null); }
+    else                   { U_valid.push(null); U_invalid.push(u); }
+  });
+
+  const U2  = cs.map(c => c < limit ? -phi : null);
+  const ARA = cs.map(c => {
+    if (c >= limit - 0.01) return null;
+    return phi / (1 - phi * c);
+  });
+  const RRA = cs.map(c => {
+    if (c >= limit - 0.01) return null;
+    return phi * c / (1 - phi * c);
+  });
+
+  return { cs, U_valid, U_invalid, U2, ARA, RRA };
+}
+
+function mkPts(cs, ys) {
+  return cs.map((c, i) => ys[i] == null ? null : ({ x: parseFloat(c.toFixed(3)), y: parseFloat(ys[i].toFixed(5)) })).filter(Boolean);
+}
+
+function makeChart2(id, color1, color2) {
+  return new Chart(document.getElementById(id), {
+    type: 'scatter',
+    data: { datasets: [
+      { showLine: true, data: [], borderColor: color1, backgroundColor: color1 + '12', fill: true, tension: 0.25, pointRadius: 0, borderWidth: 2 },
+      { showLine: true, data: [], borderColor: color2, backgroundColor: color2 + '12', fill: true, tension: 0.25, pointRadius: 0, borderWidth: 2, borderDash: [5,3] }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 120 },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `c=${ctx.parsed.x.toFixed(2)}  val=${ctx.parsed.y.toFixed(3)}` } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'c', font: { size: 10 }, color: '#888780' }, ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(1)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } },
+        y: { ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(2)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } }
+      }
+    }
+  });
+}
+
+function makeChart1(id, color) {
+  return new Chart(document.getElementById(id), {
+    type: 'scatter',
+    data: { datasets: [{ showLine: true, data: [], borderColor: color, backgroundColor: color + '12', fill: true, tension: 0.25, pointRadius: 0, borderWidth: 2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 120 },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `c=${ctx.parsed.x.toFixed(2)}  val=${ctx.parsed.y.toFixed(3)}` } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'c', font: { size: 10 }, color: '#888780' }, ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(1)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } },
+        y: { ticks: { maxTicksLimit: 5, font: { size: 9 }, color: '#888780', callback: v => parseFloat(v.toFixed(2)) }, grid: { color: 'rgba(136,135,128,0.12)' }, border: { color: 'rgba(136,135,128,0.25)' } }
+      }
+    }
+  });
+}
+
+const ch1 = makeChart2('chart1', '#639922', '#E24B4A');
+const ch2 = makeChart1('chart2', '#1D9E75');
+const ch3 = makeChart1('chart3', '#D85A30');
+const ch4 = makeChart1('chart4', '#BA7517');
+
+function setData1(ch, pts) { ch.data.datasets[0].data = pts; ch.update('none'); }
+function setData2(ch, pts1, pts2) {
+  ch.data.datasets[0].data = pts1;
+  ch.data.datasets[1].data = pts2;
+  ch.update('none');
+}
+
+function getInsight(phi, cmax) {
+  const limit = (1 / phi).toFixed(2);
+  const midC  = 0.5 / phi;
+  const araAtMid = (phi / (1 - phi * midC)).toFixed(3);
+  return `<strong>φ = ${phi.toFixed(2)}:</strong> la funzione è valida solo per c &lt; <strong>${limit}</strong>. L'ARA parte da φ = ${phi.toFixed(2)} e diverge verso infinito avvicinandosi al limite. Economicamente, l'investitore diventa <em>infinitamente avverso</em> al rischio vicino al proprio "soffitto" di consumo — comportamento controintuitivo e non osservato empiricamente. Il vantaggio tecnico è che U''(c) = −φ è <em>costante</em>, rendendo l'utilità marginale lineare: questa proprietà è sfruttata per derivare il CAPM in forma chiusa.`;
+}
+
+function update() {
+  const phi  = parseFloat(document.getElementById('phi').value);
+  const cmax = parseFloat(document.getElementById('cmax').value);
+  const limit = 1 / phi;
+
+  document.getElementById('phi-val').textContent    = phi.toFixed(2);
+  document.getElementById('cmax-val').textContent   = cmax;
+  document.getElementById('card-phi').textContent   = phi.toFixed(2);
+  document.getElementById('card-limit').textContent = limit.toFixed(2);
+
+  const midC = Math.min(0.5 * limit, limit - 0.05);
+  const araAtMid = phi / (1 - phi * midC);
+  const rraAtMid = phi * midC / (1 - phi * midC);
+  document.getElementById('card-ara').textContent   = araAtMid.toFixed(2);
+  document.getElementById('card-rra').textContent   = rraAtMid.toFixed(2);
+  document.getElementById('formula-text').textContent = `U(c) = c − ${(phi/2).toFixed(3)}·c²,  c < ${limit.toFixed(2)}`;
+
+  const wb = document.getElementById('warning-banner');
+  const wt = document.getElementById('warning-text');
+  if (cmax >= limit) {
+    wb.style.display = 'flex';
+    wt.textContent = `Il grafico mostra valori oltre il limite c = ${limit.toFixed(2)} (zona tratteggiata rossa). In quella zona U'(c) < 0: economicamente non valida.`;
+  } else {
+    wb.style.display = 'none';
+  }
+
+  document.getElementById('insight-box').innerHTML = getInsight(phi, cmax);
+  const { cs, U_valid, U_invalid, U2, ARA, RRA } = computeData(phi, cmax);
+  setData2(ch1, mkPts(cs, U_valid), mkPts(cs, U_invalid));
+  setData1(ch2, mkPts(cs, U2));
+  setData1(ch3, mkPts(cs, ARA));
+  setData1(ch4, mkPts(cs, RRA));
+}
+
+document.getElementById('phi').addEventListener('input', update);
+document.getElementById('cmax').addEventListener('input', update);
+update();
+</script>
+</body>
+</html>
