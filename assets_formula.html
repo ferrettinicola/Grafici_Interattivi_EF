@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.1 — Assets Finanziari e Formula di Pricing</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], tags: 'ams' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #111010;
+  --ink-2:     #444340;
+  --ink-3:     #888680;
+  --paper:     #fafaf7;
+  --surface:   #f3f2ee;
+  --border:    #e2e0d8;
+  --border-2:  #ccc9be;
+  --accent:    #1a3a6b;
+  --accent-lt: #e8edf6;
+  --done:      #1a5c3a;
+  --done-lt:   #e6f2eb;
+  --highlight: #7a4e10;
+  --highlight-lt: #fdf0db;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+/* ── Header ── */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: sticky;
+  top: 0;
+  background: rgba(250,250,247,0.96);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+.breadcrumb {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.breadcrumb a { color: var(--ink-3); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+.page-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.header-badge {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--done-lt);
+  color: var(--done);
+  letter-spacing: 0.5px;
+}
+
+/* ── Layout ── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 6rem;
+}
+
+/* ── Hero ── */
+.hero {
+  margin-bottom: 3.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-label {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.hero h1 {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  line-height: 1.25;
+}
+.hero-lead {
+  font-size: 16px;
+  color: var(--ink-2);
+  max-width: 640px;
+  line-height: 1.8;
+}
+.key-formula {
+  margin-top: 1.75rem;
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* ── Sections ── */
+.content-section {
+  margin-bottom: 3rem;
+}
+.content-section h2 {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+.content-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: system-ui, sans-serif;
+  color: var(--ink-2);
+  margin: 1.5rem 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.content-section p {
+  font-size: 15px;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+}
+
+/* ── Callout boxes ── */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-lt);
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.25rem 0;
+}
+.callout.highlight {
+  border-left-color: var(--highlight);
+  background: var(--highlight-lt);
+}
+.callout.green {
+  border-left-color: var(--done);
+  background: var(--done-lt);
+}
+.callout-label {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.callout.highlight .callout-label { color: var(--highlight); }
+.callout.green .callout-label { color: var(--done); }
+.callout p { margin-bottom: 0; font-size: 14px; color: var(--ink-2); }
+.callout .math-display { text-align: center; margin: 0.5rem 0; }
+
+/* ── Math display ── */
+.math-display {
+  text-align: center;
+  margin: 1.25rem 0;
+  font-size: 16px;
+  overflow-x: auto;
+}
+
+/* ── Definition box ── */
+.definition {
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  background: #fff;
+}
+.definition-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 0.5rem;
+}
+.definition p { margin-bottom: 0; font-size: 14.5px; }
+
+/* ── Two-column grid ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  background: #fff;
+}
+.card-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+.card h4 {
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+.card p {
+  font-size: 13px;
+  margin-bottom: 0;
+  color: var(--ink-3);
+}
+
+/* ── Tree diagram ── */
+.tree-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+.tree-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 1rem;
+}
+
+/* ── Interactive Calculator ── */
+.calculator {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.calc-header {
+  background: var(--surface);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.calc-header-title {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.calc-icon {
+  width: 24px; height: 24px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 13px;
+}
+.calc-body {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.calc-controls h4 {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 1rem;
+}
+.slider-group { margin-bottom: 1rem; }
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.slider-name {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.slider-val {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.calc-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.calc-results h4 {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 0.25rem;
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.result-row:last-child { border-bottom: none; }
+.result-name {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-family: system-ui, sans-serif;
+}
+.result-value {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.result-value.verify {
+  color: var(--done);
+}
+.result-value.warn { color: var(--highlight); }
+
+/* ── SVG diagram ── */
+svg text { font-family: system-ui, sans-serif; }
+
+/* ── Weights visualization ── */
+.weights-viz {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.25rem 0;
+}
+
+/* ── Table ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  margin: 1rem 0;
+}
+.data-table th {
+  background: var(--surface);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+.data-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-2);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td:nth-child(n+2) { font-family: 'Courier New', monospace; text-align: right; }
+.data-table th:nth-child(n+2) { text-align: right; }
+
+/* ── Nav bottom ── */
+.nav-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 3rem;
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── Decomposition table ── */
+.decomp-bar {
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin: 4px 0;
+}
+.decomp-seg {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  color: #fff;
+  transition: width 0.4s ease;
+}
+
+@media (max-width: 700px) {
+  .site-header { padding: 1rem 1.25rem; }
+  .main { padding: 2rem 1.25rem 4rem; }
+  .two-col { grid-template-columns: 1fr; }
+  .calc-body { grid-template-columns: 1fr; }
+  .nav-bottom { flex-direction: column; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="breadcrumb">
+      <a href="index.html">Asset Pricing</a>
+      <span>›</span>
+      <span>Parte I</span>
+      <span>›</span>
+      <span>1.1</span>
+    </div>
+    <div class="page-title">Assets Finanziari e Formula di Pricing</div>
+  </div>
+  <span class="header-badge">Disponibile</span>
+</header>
+
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="section-label">Parte I · Fondamenti</div>
+    <h1>Assets Finanziari<br>e Formula di Pricing</h1>
+    <p class="hero-lead">Un asset finanziario è semplicemente un contratto che dà diritto a pagamenti futuri. Capire come si forma il suo prezzo oggi richiede di tenere conto di due fattori fondamentali: il <em>tempo</em> (il pagamento avviene nel futuro) e l'<em>incertezza</em> (il pagamento può dipendere da eventi non ancora noti).</p>
+    <div class="key-formula">$$p_t = \mathbb{E}[m_{t+1}\, x_{t+1}]$$</div>
+  </div>
+
+  <!-- SECTION 1: Cosa è un asset finanziario -->
+  <div class="content-section">
+    <h2>Cosa è un asset finanziario</h2>
+    <p>Un <strong>asset finanziario</strong> regola il trasferimento di risorse tra un prestatore (<em>lender</em>) e un debitore (<em>borrower</em>). Concretamente, è una promessa di pagamenti futuri: il compratore cede risorse oggi in cambio di un payoff futuro.</p>
+
+    <div class="definition">
+      <div class="definition-title">Definizione — Asset finanziario</div>
+      <p>Un asset finanziario è una <em>claim</em> su pagamenti futuri. È caratterizzato da due grandezze:</p>
+      <ul style="margin-top:0.5rem; padding-left:1.5rem; font-size:14.5px; color:var(--ink-2);">
+        <li style="margin-bottom:0.4rem;"><strong>Prezzo</strong> $p_t$: la quantità di risorse cedute oggi (al tempo $t$)</li>
+        <li><strong>Payoff</strong> $x_{t+1}$: i pagamenti ricevuti nel futuro (al tempo $t+1$)</li>
+      </ul>
+    </div>
+
+    <p>Il payoff può essere <strong>certo</strong> (lo stesso indipendentemente dagli eventi futuri, come un deposito bancario o un'obbligazione) oppure <strong>incerto</strong> (varia in base allo stato del mondo che si realizzerà, come un'azione o un contratto assicurativo).</p>
+
+    <p>In termini empirici, il rischio è la componente più importante del prezzo di un asset. Negli ultimi 60 anni, il rendimento medio annuo delle azioni USA è stato circa il 9%: solo l'1% circa è attribuibile al tasso privo di rischio (compensazione per il tempo), mentre il restante 8% è un premio per il rischio sopportato.</p>
+
+    <div class="two-col">
+      <div class="card">
+        <span class="card-badge" style="background:#e8edf6;color:#1a3a6b;">ASSET RISCHIOSO</span>
+        <h4>Payoff incerto</h4>
+        <p>Il pagamento $x_{t+1}(s)$ dipende dallo stato di natura $s$ che si realizzerà. Esempi: azioni, contratti derivati, assicurazioni.</p>
+      </div>
+      <div class="card">
+        <span class="card-badge" style="background:#e6f2eb;color:#1a5c3a;">ASSET PRIVO DI RISCHIO</span>
+        <h4>Payoff certo</h4>
+        <p>Il pagamento $x^f_{t+1}$ è identico in ogni stato $s$. Esempi: titoli di Stato a breve termine, depositi garantiti.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Notazione e stati di natura -->
+  <div class="content-section">
+    <h2>Notazione: stati di natura e payoff</h2>
+    <p>Per modellare l'incertezza utilizziamo la nozione di <strong>stato di natura</strong>. Al tempo $t+1$ può realizzarsi uno tra $S$ stati possibili, indicizzati da $s = 1, 2, \ldots, S$. Ogni stato è associato a una probabilità $\pi(s) > 0$ con $\sum_{s=1}^S \pi(s) = 1$.</p>
+
+    <p>Il payoff di un asset rischioso è dunque un vettore aleatorio:</p>
+    <div class="math-display">$$x_{t+1} \equiv [x_{t+1}(1),\; x_{t+1}(2),\; \ldots,\; x_{t+1}(S)]^{\prime}$$</div>
+
+    <p>mentre il prezzo $p_t$ è un numero deterministico noto oggi (al tempo $t$).</p>
+
+    <h3>L'esempio di riferimento: scenario a due stati</h3>
+    <p>Per tutta la trattazione utilizzeremo un esempio di riferimento con <strong>un periodo</strong> e <strong>due stati</strong> di natura. I dati sono calibrati per replicare approssimativamente il mercato USA:</p>
+
+    <div class="tree-wrap">
+      <div class="tree-title">Diagramma payoff — Scenario a due stati</div>
+      <svg viewBox="0 0 560 220" style="width:100%;max-width:560px;display:block;margin:0 auto;">
+        <!-- Timeline labels -->
+        <text x="80" y="30" text-anchor="middle" font-size="12" fill="#888680" font-weight="700" letter-spacing="1">t</text>
+        <text x="440" y="30" text-anchor="middle" font-size="12" fill="#888680" font-weight="700" letter-spacing="1">t+1</text>
+        <!-- Vertical line at t -->
+        <line x1="80" y1="40" x2="80" y2="180" stroke="#e2e0d8" stroke-width="1" stroke-dasharray="4"/>
+        <!-- Vertical line at t+1 -->
+        <line x1="440" y1="40" x2="440" y2="180" stroke="#e2e0d8" stroke-width="1" stroke-dasharray="4"/>
+
+        <!-- Risky asset -->
+        <text x="80" y="115" text-anchor="middle" font-size="22" fill="#1a3a6b" font-weight="400">100</text>
+        <text x="78" y="128" text-anchor="middle" font-size="10" fill="#888680">p(xᵃ)</text>
+
+        <!-- Upper branch: state 1 -->
+        <line x1="105" y1="108" x2="405" y2="75" stroke="#1a3a6b" stroke-width="1.5"/>
+        <text x="255" y="78" text-anchor="middle" font-size="11" fill="#888680">π(1) = 0.45</text>
+        <text x="440" y="75" text-anchor="start" font-size="20" fill="#1a3a6b" font-weight="400" dx="6">125</text>
+        <text x="448" y="89" text-anchor="start" font-size="10" fill="#888680">stato s=1</text>
+
+        <!-- Lower branch: state 2 -->
+        <line x1="105" y1="115" x2="405" y2="148" stroke="#1a3a6b" stroke-width="1.5"/>
+        <text x="255" y="145" text-anchor="middle" font-size="11" fill="#888680">π(2) = 0.55</text>
+        <text x="440" y="152" text-anchor="start" font-size="20" fill="#1a3a6b" font-weight="400" dx="6">96</text>
+        <text x="448" y="166" text-anchor="start" font-size="10" fill="#888680">stato s=2</text>
+
+        <!-- Risk-free asset -->
+        <text x="80" y="195" text-anchor="middle" font-size="11" fill="#888680">Risk-free: p(x f ) = 108 → x f = 109 in ogni stato</text>
+      </svg>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Asset</th>
+          <th>Prezzo $p_t$</th>
+          <th>Payoff stato 1</th>
+          <th>Payoff stato 2</th>
+          <th>Prob. stato 1</th>
+          <th>Prob. stato 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Rischioso ($x^a$)</td>
+          <td>100</td>
+          <td>125</td>
+          <td>96</td>
+          <td>0.45</td>
+          <td>0.55</td>
+        </tr>
+        <tr>
+          <td>Risk-free ($x^f$)</td>
+          <td>108</td>
+          <td>109</td>
+          <td>109</td>
+          <td>0.45</td>
+          <td>0.55</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 3: Returns -->
+  <div class="content-section">
+    <h2>Rendimenti degli asset</h2>
+    <p>I rendimenti (<em>returns</em>) sono uno strumento fondamentale perché standardizzano il confronto tra asset con prezzi diversi. Definiamo il <strong>rendimento lordo</strong> (<em>gross return</em>) come il rapporto tra payoff e prezzo:</p>
+
+    <div class="math-display">$$R_{t+1} \equiv \frac{x_{t+1}}{p_t}$$</div>
+
+    <p>Il valore numerico del gross return include sia il capitale investito sia il guadagno (es. 1.05 significa guadagno del 5%). Il <strong>rendimento netto</strong> (<em>net return</em> o <em>rate of return</em>) isola solo l'eccesso:</p>
+
+    <div class="math-display">$$r_{t+1} = R_{t+1} - 1 \qquad \text{oppure, in forma continua,} \quad r = \ln(R)$$</div>
+
+    <div class="callout highlight">
+      <div class="callout-label">Intuizione chiave</div>
+      <p>A parità di payoff futuro, un prezzo più basso oggi implica un rendimento più alto. Questo principio è alla base di gran parte della finanza: il prezzo e il rendimento si muovono in direzioni opposte.</p>
+    </div>
+
+    <p>Per l'asset rischioso dell'esempio, i rendimenti nei due stati sono:</p>
+    <div class="math-display">$$R^a_{t+1} = \left[\frac{125}{100},\; \frac{96}{100}\right]^{\prime} = [1.25,\; 0.96]^{\prime}$$</div>
+
+    <p>Per l'asset privo di rischio, il rendimento è deterministico (uguale in ogni stato):</p>
+    <div class="math-display">$$R^f_{t+1} = \frac{109}{108} \approx 1.01$$</div>
+
+    <h3>La pricing formula in termini di rendimenti</h3>
+    <p>Dividendo la formula di pricing $p_t = \mathbb{E}[m_{t+1} x_{t+1}]$ per $p_t$ e usando la definizione $R_{t+1} = x_{t+1}/p_t$, si ottiene la <strong>forma equivalente</strong> in termini di rendimenti:</p>
+
+    <div class="math-display">$$1 = \mathbb{E}[m_{t+1}\, R_{t+1}]$$</div>
+
+    <div class="callout green">
+      <div class="callout-label">Perché usare i rendimenti</div>
+      <p>I rendimenti sono stazionari nel tempo (non crescono sistematicamente come i prezzi), il che li rende lo strumento privilegiato negli studi empirici. Tuttavia, ragionare solo in termini di rendimenti non permette di determinare i prezzi assoluti degli asset.</p>
+    </div>
+
+    <h3>Rendimenti in eccesso e portafogli a costo zero</h3>
+    <p>Prendendo a prestito 1 euro al tasso privo di rischio $R^f$ e investendolo in un asset con rendimento $R$, si ottiene un portafoglio con prezzo zero e payoff $R - R^f$. Questo è il <strong>rendimento in eccesso</strong> (<em>excess return</em>) $R^e$, usato diffusamente per separare l'analisi dei tassi di interesse da quella dei premi al rischio:</p>
+
+    <div class="math-display">$$0 = \mathbb{E}[m_{t+1}\, R^e_{t+1}] = \mathbb{E}[m_{t+1}(R_{t+1} - R^f)]$$</div>
+  </div>
+
+  <!-- SECTION 4: La formula di pricing -->
+  <div class="content-section">
+    <h2>La formula di pricing: $p = \mathbb{E}[mx]$</h2>
+    <p>La formula di pricing è il cuore della teoria. Essa afferma che il prezzo di un asset oggi è il <strong>valore atteso scontato</strong> del suo payoff futuro:</p>
+
+    <div class="math-display">$$p_t = \mathbb{E}[m_{t+1}\, x_{t+1}] = \sum_{s=1}^{S} \pi(s)\, m_{t+1}(s)\, x_{t+1}(s)$$</div>
+
+    <p>La formula assegna a ciascun payoff futuro un <strong>doppio sistema di pesi</strong>:</p>
+
+    <div class="two-col">
+      <div class="card">
+        <span class="card-badge" style="background:#e8edf6;color:#1a3a6b;">PRIMO PESO</span>
+        <h4>Probabilità $\pi(s)$</h4>
+        <p>Misura la verosimiglianza del verificarsi dello stato $s$. Non ha nulla a che fare con la valutazione del rischio: riguarda solo la frequenza degli eventi.</p>
+      </div>
+      <div class="card">
+        <span class="card-badge" style="background:#fdf0db;color:#7a4e10;">SECONDO PESO</span>
+        <h4>SDF $m_{t+1}(s)$</h4>
+        <p>Tiene conto della preferenza dell'investitore per le risorse nei diversi stati. Non ha nulla a che fare con la probabilità del verificarsi degli eventi.</p>
+      </div>
+    </div>
+
+    <p>Il prodotto $\pi(s) \cdot m_{t+1}(s)$ costituisce il peso complessivo assegnato al payoff nello stato $s$. Asset che pagano di più negli stati <em>importanti</em> (con alto SDF) sono valorizzati di più.</p>
+
+    <h3>Verifica numerica dell'esempio</h3>
+    <p>Con $m_{t+1} = [0.35,\; 1.52]^{\prime}$ e i dati dell'esempio:</p>
+
+    <div class="math-display">
+      $$p^a_t = \pi(1)\cdot m(1)\cdot x^a(1) + \pi(2)\cdot m(2)\cdot x^a(2)$$
+      $$= 0.45 \times 0.35 \times 125 + 0.55 \times 1.52 \times 96 = 19.69 + 80.21 = 99.90 \approx 100 \checkmark$$
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stato $s$</th>
+          <th>$\pi(s)$</th>
+          <th>$m(s)$</th>
+          <th>$x^a(s)$</th>
+          <th>$\pi(s)\cdot m(s)\cdot x^a(s)$</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$s = 1$</td>
+          <td>0.45</td>
+          <td>0.35</td>
+          <td>125</td>
+          <td>19.69</td>
+        </tr>
+        <tr>
+          <td>$s = 2$</td>
+          <td>0.55</td>
+          <td>1.52</td>
+          <td>96</td>
+          <td>80.21</td>
+        </tr>
+        <tr style="font-weight:600;">
+          <td colspan="4" style="text-align:right;color:var(--ink-2);">Prezzo calcolato</td>
+          <td>99.90 ≈ 100</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 5: Remunerazione ritardo e rischio -->
+  <div class="content-section">
+    <h2>Ritardo e rischio nella formula</h2>
+
+    <h3>Remunerazione del ritardo</h3>
+    <p>Applicando la formula di pricing all'asset privo di rischio (con payoff costante $x^f$ in ogni stato), il rendimento risk-free entra come fattore comune:</p>
+
+    <div class="math-display">$$1 = \mathbb{E}[m_{t+1}]\cdot R^f_{t+1} \quad \Longrightarrow \quad \mathbb{E}[m_{t+1}] = \frac{1}{R^f_{t+1}}$$</div>
+
+    <div class="callout">
+      <div class="callout-label">Interpretazione</div>
+      <p>Il <em>valore atteso</em> dell'SDF misura la remunerazione per il <strong>ritardo</strong>. È il classico fattore di sconto deterministico che calcola il valore attuale di un pagamento futuro certo. Nell'esempio: $\mathbb{E}[m] = 0.45 \times 0.35 + 0.55 \times 1.52 = 0.990 \approx 1/1.01$.</p>
+    </div>
+
+    <h3>Remunerazione del rischio</h3>
+    <p>Il rischio viene remunerato attraverso lo <strong>scostamento dell'SDF dalla sua media</strong>. Ogni addendo della formula di pricing può essere scomposto come:</p>
+
+    <div class="math-display">$$\pi(s)\cdot m(s)\cdot x(s) = \underbrace{\pi(s)\cdot \mathbb{E}[m]\cdot x(s)}_{\text{remunerazione ritardo}} + \underbrace{\pi(s)\cdot [m(s)-\mathbb{E}[m]]\cdot x(s)}_{\text{remunerazione rischio}}$$</div>
+
+    <p>Il <strong>premio al rischio</strong> di un asset dipende quindi dalla <em>covarianza</em> tra il suo payoff e lo SDF:</p>
+
+    <div class="math-display">$$p = \frac{\mathbb{E}[x]}{R^f} + \text{cov}(m, x)$$</div>
+
+    <div class="callout highlight">
+      <div class="callout-label">Principio fondamentale</div>
+      <p>Asset che pagano di più quando l'SDF è alto (stati "negativi" per l'investitore, es. recessioni) valgono di più perché offrono protezione. Asset che pagano di più quando l'SDF è basso (stati "positivi") devono offrire rendimenti attesi più alti per essere detenuti.</p>
+    </div>
+
+    <h3>Il modello generale: due equazioni</h3>
+    <p>La formula di pricing può essere specializzata aggiungendo una seconda equazione che definisce l'SDF in funzione dei dati e dei parametri del modello:</p>
+
+    <div class="math-display">
+      $$p_t = \mathbb{E}[m_{t+1}\, x_{t+1}]$$
+      $$m_{t+1} = f(\text{dati},\, \text{parametri})$$
+    </div>
+
+    <p>La scelta della funzione $f(\cdot)$ definisce il modello specifico. Il vantaggio di questa struttura è la sua <strong>universalità</strong>: azioni, obbligazioni, opzioni — che sembravano richiedere teorie separate — sono tutti casi speciali della stessa formula.</p>
+  </div>
+
+  <!-- INTERACTIVE CALCULATOR -->
+  <div class="content-section">
+    <h2>Calcolatore interattivo</h2>
+    <p>Modifica i parametri e osserva come cambia il prezzo calcolato dalla formula $p = \mathbb{E}[mx]$. Usa i cursori per esplorare l'effetto di payoff, probabilità e SDF.</p>
+
+    <div class="calculator">
+      <div class="calc-header">
+        <div class="calc-icon">⚙</div>
+        <div class="calc-header-title">Formula di pricing — Scenario a due stati</div>
+      </div>
+      <div class="calc-body">
+        <div class="calc-controls">
+          <h4>Parametri</h4>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span class="slider-name">Payoff stato 1 — $x(1)$</span>
+              <span class="slider-val" id="lbl-x1">125</span>
+            </div>
+            <input type="range" id="sl-x1" min="80" max="200" value="125" step="1">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span class="slider-name">Payoff stato 2 — $x(2)$</span>
+              <span class="slider-val" id="lbl-x2">96</span>
+            </div>
+            <input type="range" id="sl-x2" min="50" max="150" value="96" step="1">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span class="slider-name">Probabilità stato 1 — $\pi(1)$</span>
+              <span class="slider-val" id="lbl-pi">0.45</span>
+            </div>
+            <input type="range" id="sl-pi" min="0.05" max="0.95" value="0.45" step="0.01">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span class="slider-name">SDF stato 1 — $m(1)$</span>
+              <span class="slider-val" id="lbl-m1">0.35</span>
+            </div>
+            <input type="range" id="sl-m1" min="0.05" max="1.5" value="0.35" step="0.01">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label">
+              <span class="slider-name">SDF stato 2 — $m(2)$</span>
+              <span class="slider-val" id="lbl-m2">1.52</span>
+            </div>
+            <input type="range" id="sl-m2" min="0.5" max="3.0" value="1.52" step="0.01">
+          </div>
+        </div>
+
+        <div class="calc-results">
+          <h4>Risultati</h4>
+
+          <div class="result-row">
+            <span class="result-name">$\mathbb{E}[x]$ — Payoff atteso</span>
+            <span class="result-value" id="res-ex">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">$\mathbb{E}[m]$ — Fattore di sconto</span>
+            <span class="result-value" id="res-em">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">$R^f = 1/\mathbb{E}[m]$ — Tasso risk-free</span>
+            <span class="result-value" id="res-rf">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">$p = \mathbb{E}[mx]$ — Prezzo calcolato</span>
+            <span class="result-value" id="res-p">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">$\mathbb{E}[R]$ — Rendimento atteso</span>
+            <span class="result-value" id="res-er">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">$\mathbb{E}[R] - R^f$ — Premio al rischio</span>
+            <span class="result-value" id="res-rp">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-name">Verifica: $\mathbb{E}[mR]$</span>
+            <span class="result-value verify" id="res-check">—</span>
+          </div>
+
+          <!-- Mini bar viz -->
+          <div style="margin-top:0.75rem;">
+            <div style="font-family:system-ui;font-size:11px;color:var(--ink-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Scomposizione prezzo</div>
+            <div style="font-family:system-ui;font-size:11px;color:var(--ink-3);margin-bottom:4px;">Contributo stato 1</div>
+            <div class="decomp-bar" id="bar1">
+              <div class="decomp-seg" id="bar1-delay" style="background:#1a3a6b;"></div>
+              <div class="decomp-seg" id="bar1-risk" style="background:#888680;"></div>
+            </div>
+            <div style="font-family:system-ui;font-size:11px;color:var(--ink-3);margin-top:4px;margin-bottom:4px;">Contributo stato 2</div>
+            <div class="decomp-bar" id="bar2">
+              <div class="decomp-seg" id="bar2-delay" style="background:#1a5c3a;"></div>
+              <div class="decomp-seg" id="bar2-risk" style="background:#888680;"></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:6px;">
+              <span style="font-family:system-ui;font-size:10px;color:var(--ink-3);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;display:inline-block;background:#1a3a6b;"></span>Ritardo</span>
+              <span style="font-family:system-ui;font-size:10px;color:var(--ink-3);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:2px;display:inline-block;background:#888680;"></span>Rischio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Prezzi dei dividendi -->
+  <div class="content-section">
+    <h2>Price-dividend ratio e modelli multi-periodo</h2>
+    <p>Nelle applicazioni pratiche, è spesso utile esprimere il prezzo di un'azione in rapporto ai suoi dividendi. Il <strong>price-dividend ratio</strong> $p_t/d_t$ è una misura stazionaria ampiamente usata in finanza empirica.</p>
+
+    <p>In un modello multi-periodo, la formula di pricing si estende iterando le aspettative:</p>
+
+    <div class="math-display">$$p_t = \mathbb{E}_t\!\left[\sum_{\tau=1}^{\infty} m_{t+\tau}\, d_{t+\tau}\right]$$</div>
+
+    <p>dove $m_{t+\tau} = m_{t+1}\cdot m_{t+2} \cdots m_{t+\tau}$ è il fattore di sconto cumulato dal tempo $t$ al tempo $t+\tau$, e $d_{t+\tau}$ sono i dividendi futuri.</p>
+
+    <div class="callout">
+      <div class="callout-label">Approcci alternativi all'SDF</div>
+      <p>Esistono due grandi approcci per determinare l'SDF: il <strong>pricing assoluto</strong> riconduce l'SDF alle preferenze degli investitori e ai fondamentali macroeconomici (es. consumo); il <strong>pricing relativo</strong> determina il prezzo di un asset in funzione del prezzo di altri asset già noti. Il consumption-based model è l'esempio cardine del primo approccio.</p>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav-bottom">
+    <a href="index.html" class="nav-btn">← Torna al corso</a>
+    <a href="sdf.html" class="nav-btn">1.2 — Stochastic Discount Factor →</a>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>Asset Pricing · 1.1 — Assets Finanziari e Formula di Pricing</span>
+  <span>Parte I · Fondamenti</span>
+</footer>
+
+<script>
+function fmt(v, dec=2){ return v.toFixed(dec); }
+
+function update(){
+  const x1  = +document.getElementById('sl-x1').value;
+  const x2  = +document.getElementById('sl-x2').value;
+  const pi1 = +document.getElementById('sl-pi').value;
+  const m1  = +document.getElementById('sl-m1').value;
+  const m2  = +document.getElementById('sl-m2').value;
+
+  document.getElementById('lbl-x1').textContent = x1;
+  document.getElementById('lbl-x2').textContent = x2;
+  document.getElementById('lbl-pi').textContent = fmt(pi1);
+  document.getElementById('lbl-m1').textContent = fmt(m1);
+  document.getElementById('lbl-m2').textContent = fmt(m2);
+
+  const pi2 = 1 - pi1;
+
+  const Em = pi1*m1 + pi2*m2;
+  const Ex = pi1*x1 + pi2*x2;
+  const Rf = 1/Em;
+
+  // Price = E[mx]
+  const p = pi1*m1*x1 + pi2*m2*x2;
+
+  // Expected return
+  const ER = (pi1*(x1/p) + pi2*(x2/p));
+  const rp = ER - Rf;
+
+  // Check: E[mR] should = 1
+  const check = pi1*m1*(x1/p) + pi2*m2*(x2/p);
+
+  document.getElementById('res-em').textContent = fmt(Em, 4);
+  document.getElementById('res-ex').textContent = fmt(Ex, 2);
+  document.getElementById('res-rf').textContent = fmt(Rf, 4) + ' (' + fmt((Rf-1)*100,2) + '%)';
+  document.getElementById('res-p').textContent  = fmt(p, 2);
+  document.getElementById('res-er').textContent = fmt(ER, 4) + ' (' + fmt((ER-1)*100,2) + '%)';
+  const rpEl = document.getElementById('res-rp');
+  rpEl.textContent = fmt(rp*100,2) + ' pp';
+  rpEl.className = 'result-value ' + (rp > 0 ? 'verify' : 'warn');
+
+  const checkEl = document.getElementById('res-check');
+  checkEl.textContent = fmt(check, 6);
+  checkEl.className = 'result-value ' + (Math.abs(check - 1) < 0.001 ? 'verify' : 'warn');
+
+  // Decomposition bars
+  // Each state contributes: π(s)·E[m]·x(s) [delay] + π(s)·[m(s)-E[m]]·x(s) [risk]
+  const d1_delay = pi1 * Em * x1;
+  const d1_risk  = pi1 * (m1 - Em) * x1;
+  const d2_delay = pi2 * Em * x2;
+  const d2_risk  = pi2 * (m2 - Em) * x2;
+
+  const total = p;
+
+  // Bar 1: show delay vs risk for state 1
+  const b1delay_pct = Math.max(0, d1_delay / total * 100);
+  const b1risk_pct  = Math.max(0, d1_risk  / total * 100);
+  document.getElementById('bar1-delay').style.width = b1delay_pct + '%';
+  document.getElementById('bar1-delay').textContent = b1delay_pct > 8 ? fmt(d1_delay,1) : '';
+  document.getElementById('bar1-risk').style.width = b1risk_pct + '%';
+  document.getElementById('bar1-risk').textContent = b1risk_pct > 8 ? fmt(d1_risk,1) : '';
+
+  const b2delay_pct = Math.max(0, d2_delay / total * 100);
+  const b2risk_pct  = Math.max(0, d2_risk  / total * 100);
+  document.getElementById('bar2-delay').style.width = b2delay_pct + '%';
+  document.getElementById('bar2-delay').textContent = b2delay_pct > 8 ? fmt(d2_delay,1) : '';
+  document.getElementById('bar2-risk').style.width = b2risk_pct + '%';
+  document.getElementById('bar2-risk').textContent = b2risk_pct > 8 ? fmt(d2_risk,1) : '';
+}
+
+['sl-x1','sl-x2','sl-pi','sl-m1','sl-m2'].forEach(id => {
+  document.getElementById(id).addEventListener('input', update);
+});
+
+update();
+</script>
+</body>
+</html>

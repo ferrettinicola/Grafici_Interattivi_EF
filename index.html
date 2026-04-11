@@ -6,296 +6,64 @@
 <title>Asset Pricing — Programma del Corso</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --ink:       #111010;
-  --ink-2:     #444340;
-  --ink-3:     #888680;
-  --paper:     #fafaf7;
-  --surface:   #f3f2ee;
-  --border:    #e2e0d8;
-  --border-2:  #ccc9be;
-  --accent:    #1a3a6b;
-  --accent-lt: #e8edf6;
-  --done:      #1a5c3a;
-  --done-lt:   #e6f2eb;
-  --wip:       #7a4e10;
-  --wip-lt:    #fdf0db;
-  --soon:      #888680;
-  --soon-lt:   #f3f2ee;
+  --ink:#111010;--ink-2:#444340;--ink-3:#888680;--paper:#fafaf7;--surface:#f3f2ee;
+  --border:#e2e0d8;--border-2:#ccc9be;--accent:#1a3a6b;--accent-lt:#e8edf6;
+  --done:#1a5c3a;--done-lt:#e6f2eb;--wip:#7a4e10;--wip-lt:#fdf0db;--soon:#888680;--soon-lt:#f3f2ee;
 }
-
-body {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  background: var(--paper);
-  color: var(--ink);
-  min-height: 100vh;
-}
-
-/* ── Header ── */
-.site-header {
-  border-bottom: 1px solid var(--border);
-  padding: 2rem 3rem 1.75rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-}
-.site-title {
-  font-size: 11px;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.site-name {
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: -0.5px;
-  margin-top: 4px;
-  color: var(--ink);
-}
-.header-meta {
-  text-align: right;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 12px;
-  color: var(--ink-3);
-  line-height: 1.7;
-}
-
-/* ── Layout ── */
-.main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 3rem 3rem 5rem;
-}
-
-.intro {
-  max-width: 600px;
-  margin-bottom: 3rem;
-  border-left: 3px solid var(--accent);
-  padding-left: 1.25rem;
-}
-.intro p {
-  font-size: 15px;
-  color: var(--ink-2);
-  line-height: 1.75;
-}
-
-/* ── Legend ── */
-.legend {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-  flex-wrap: wrap;
-}
-.leg-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 11px;
-  color: var(--ink-3);
-  letter-spacing: 0.3px;
-}
-.leg-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* ── Sections ── */
-.sections { display: flex; flex-direction: column; gap: 2.5rem; }
-
-.section-block {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.section-num {
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--ink-3);
-  text-transform: uppercase;
-  min-width: 60px;
-}
-
-.section-title {
-  font-size: 17px;
-  font-weight: 400;
-  color: var(--ink);
-  letter-spacing: -0.2px;
-}
-
-.section-desc {
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 12px;
-  color: var(--ink-3);
-  margin-left: auto;
-  text-align: right;
-  max-width: 280px;
-  line-height: 1.5;
-}
-
-/* ── Topic rows ── */
-.topics { display: flex; flex-direction: column; }
-
-.topic-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.95rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.12s;
-  position: relative;
-}
-.topic-row:last-child { border-bottom: none; }
-.topic-row.clickable:hover { background: var(--surface); cursor: pointer; }
-.topic-row.locked { opacity: 0.55; cursor: default; }
-
-.topic-num {
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  color: var(--ink-3);
-  min-width: 36px;
-}
-
-.topic-info { flex: 1; min-width: 0; }
-.topic-name {
-  font-size: 14px;
-  color: var(--ink);
-  font-family: system-ui, -apple-system, sans-serif;
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-.topic-sub {
-  font-size: 12px;
-  color: var(--ink-3);
-  font-family: system-ui, -apple-system, sans-serif;
-  line-height: 1.4;
-}
-
-.topic-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tag {
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  padding: 2px 7px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
-}
-.tag-done  { background: var(--done-lt);  color: var(--done); }
-.tag-wip   { background: var(--wip-lt);   color: var(--wip);  }
-.tag-soon  { background: var(--soon-lt);  color: var(--soon); }
-.tag-key   { background: var(--accent-lt); color: var(--accent); }
-
-.topic-arrow {
-  font-size: 16px;
-  color: var(--border-2);
-  transition: color 0.12s, transform 0.12s;
-  flex-shrink: 0;
-}
-.topic-row.clickable:hover .topic-arrow { color: var(--accent); transform: translateX(3px); }
-
-/* ── Sub-grid (utility functions) ── */
-.sub-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  border-top: 1px solid var(--border);
-}
-.sub-card {
-  padding: 1rem 1.25rem;
-  border-right: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.12s;
-}
-.sub-card:last-child { border-right: none; }
-.sub-card:hover { background: var(--surface); }
-.sub-badge {
-  display: inline-block;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 20px;
-  margin-bottom: 0.5rem;
-}
-.sub-name {
-  font-size: 13px;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-weight: 500;
-  color: var(--ink);
-  margin-bottom: 2px;
-}
-.sub-desc {
-  font-size: 11px;
-  color: var(--ink-3);
-  font-family: system-ui, -apple-system, sans-serif;
-  line-height: 1.4;
-}
-.sub-arrow {
-  display: block;
-  text-align: right;
-  font-size: 13px;
-  color: var(--border-2);
-  margin-top: 0.5rem;
-  transition: color 0.12s;
-}
-.sub-card:hover .sub-arrow { color: var(--accent); }
-
-/* ── Footer ── */
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 1.5rem 3rem;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 11px;
-  color: var(--ink-3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* ── Responsive ── */
-@media (max-width: 700px) {
-  .site-header { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
-  .main { padding: 2rem 1.5rem 4rem; }
-  .section-desc { display: none; }
-  .sub-grid { grid-template-columns: repeat(2, 1fr); }
-  .sub-card:nth-child(2) { border-right: none; }
-  .sub-card:nth-child(3) { border-right: 1px solid var(--border); }
-  .footer { flex-direction: column; gap: 0.5rem; text-align: center; }
-}
+body{font-family:'Georgia','Times New Roman',serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+.site-header{border-bottom:1px solid var(--border);padding:2rem 3rem 1.75rem;display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;}
+.site-name{font-size:26px;font-weight:400;letter-spacing:-0.5px;margin-top:4px;color:var(--ink);}
+.header-meta{text-align:right;font-family:system-ui,sans-serif;font-size:12px;color:var(--ink-3);line-height:1.7;}
+.main{max-width:1080px;margin:0 auto;padding:3rem 3rem 5rem;}
+.intro{max-width:600px;margin-bottom:3rem;border-left:3px solid var(--accent);padding-left:1.25rem;}
+.intro p{font-size:15px;color:var(--ink-2);line-height:1.75;}
+.legend{display:flex;gap:1.5rem;margin-bottom:2.5rem;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:system-ui,sans-serif;font-size:11px;color:var(--ink-3);letter-spacing:.3px;}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sections{display:flex;flex-direction:column;gap:2.5rem;}
+.section-block{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;}
+.section-header{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface);}
+.section-num{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--ink-3);text-transform:uppercase;min-width:60px;}
+.section-title{font-size:17px;font-weight:400;color:var(--ink);letter-spacing:-.2px;}
+.section-desc{font-family:system-ui,sans-serif;font-size:12px;color:var(--ink-3);margin-left:auto;text-align:right;max-width:280px;line-height:1.5;}
+.topics{display:flex;flex-direction:column;}
+.topic-row{display:flex;align-items:center;gap:1rem;padding:.95rem 1.5rem;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;position:relative;}
+.topic-row:last-child{border-bottom:none;}
+.topic-row.clickable:hover{background:var(--surface);cursor:pointer;}
+.topic-row.locked{opacity:.55;cursor:default;}
+.topic-num{font-family:'Courier New',monospace;font-size:12px;color:var(--ink-3);min-width:36px;}
+.topic-info{flex:1;min-width:0;}
+.topic-name{font-size:14px;color:var(--ink);font-family:system-ui,sans-serif;font-weight:500;margin-bottom:2px;}
+.topic-sub{font-size:12px;color:var(--ink-3);font-family:system-ui,sans-serif;line-height:1.4;}
+.topic-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-family:system-ui,sans-serif;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;letter-spacing:.3px;}
+.tag-done{background:var(--done-lt);color:var(--done);}
+.tag-wip{background:var(--wip-lt);color:var(--wip);}
+.tag-soon{background:var(--soon-lt);color:var(--soon);}
+.tag-key{background:var(--accent-lt);color:var(--accent);}
+.topic-arrow{font-size:16px;color:var(--border-2);transition:color .12s,transform .12s;flex-shrink:0;}
+.topic-row.clickable:hover .topic-arrow{color:var(--accent);transform:translateX(3px);}
+.sub-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);}
+.sub-card{padding:1rem 1.25rem;border-right:1px solid var(--border);text-decoration:none;color:inherit;transition:background .12s;}
+.sub-card:last-child{border-right:none;}
+.sub-card:hover{background:var(--surface);}
+.sub-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:.5rem;}
+.sub-name{font-size:13px;font-family:system-ui,sans-serif;font-weight:500;color:var(--ink);margin-bottom:2px;}
+.sub-desc{font-size:11px;color:var(--ink-3);font-family:system-ui,sans-serif;line-height:1.4;}
+.sub-arrow{display:block;text-align:right;font-size:13px;color:var(--border-2);margin-top:.5rem;transition:color .12s;}
+.sub-card:hover .sub-arrow{color:var(--accent);}
+.footer{border-top:1px solid var(--border);padding:1.5rem 3rem;font-family:system-ui,sans-serif;font-size:11px;color:var(--ink-3);display:flex;justify-content:space-between;align-items:center;}
+@media(max-width:700px){.site-header{padding:1.5rem;flex-direction:column;align-items:flex-start;}.main{padding:2rem 1.5rem 4rem;}.section-desc{display:none;}.sub-grid{grid-template-columns:repeat(2,1fr);}.footer{flex-direction:column;gap:.5rem;text-align:center;}}
 </style>
 </head>
 <body>
 
-  <header class="site-header">
-  <div>
-    <div class="site-name">Asset Pricing</div>
-  </div>
+<header class="site-header">
+  <div><div class="site-name">Asset Pricing</div></div>
 </header>
-  
-<main class="main">
 
+<main class="main">
   <div class="intro">
     <p>Raccolta di pagine interattive per lo studio dell'Asset Pricing. I contenuti seguono la struttura logica del corso: dai fondamenti teorici ai modelli applicati, passando per il framework del consumption-based model.</p>
   </div>
@@ -317,24 +85,30 @@ body {
         <div class="section-desc">La struttura di base: cos'è un asset finanziario, come si prezza, e il concetto di SDF</div>
       </div>
       <div class="topics">
-        <div class="topic-row locked">
+        <a class="topic-row clickable" href="assets_formula.html">
           <div class="topic-num">1.1</div>
           <div class="topic-info">
             <div class="topic-name">Assets finanziari e formula di pricing</div>
             <div class="topic-sub">Payoff, prezzi, rendimenti. La legge del prezzo unico e il pricing formula p = E[mx]</div>
           </div>
-          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-tags">
+            <span class="tag tag-done">Disponibile</span>
+            <span class="tag tag-key">Fondamentale</span>
+          </div>
           <div class="topic-arrow">→</div>
-        </div>
-        <div class="topic-row locked">
+        </a>
+        <a class="topic-row clickable" href="sdf.html">
           <div class="topic-num">1.2</div>
           <div class="topic-info">
             <div class="topic-name">Stochastic Discount Factor</div>
             <div class="topic-sub">Definizione generale di SDF. Relazione con il fattore di sconto classico. Arbitraggio e completezza dei mercati</div>
           </div>
-          <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
+          <div class="topic-tags">
+            <span class="tag tag-done">Disponibile</span>
+            <span class="tag tag-key">Fondamentale</span>
+          </div>
           <div class="topic-arrow">→</div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -346,7 +120,6 @@ body {
         <div class="section-desc">Il framework centrale del corso. Dalle preferenze dell'investitore ai prezzi degli asset</div>
       </div>
       <div class="topics">
-
         <a class="topic-row clickable" href="consumption_based_model.html">
           <div class="topic-num">2.1</div>
           <div class="topic-info">
@@ -359,43 +132,35 @@ body {
           </div>
           <div class="topic-arrow">→</div>
         </a>
-
-        <!-- Sub-grid for utility functions -->
-        <div style="padding: 0.75rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border);">
-          <div style="font-family: system-ui, sans-serif; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">2.2 — Funzioni di Utilità</div>
+        <div style="padding:.75rem 1.5rem .5rem;border-bottom:1px solid var(--border);">
+          <div style="font-family:system-ui,sans-serif;font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:1px;font-weight:600;">2.2 — Funzioni di Utilità</div>
         </div>
         <div class="sub-grid">
-
           <a class="sub-card" href="crra.html">
-            <div class="sub-badge" style="background:#EEEDFE; color:#534AB7;">CRRA</div>
+            <div class="sub-badge" style="background:#EEEDFE;color:#534AB7;">CRRA</div>
             <div class="sub-name">Isoelastica</div>
             <div class="sub-desc">RRA costante · U(c) = c^(1−γ)/(1−γ)</div>
             <div class="sub-arrow">→</div>
           </a>
-
           <a class="sub-card" href="cara.html">
-            <div class="sub-badge" style="background:#FAECE7; color:#993C1D;">CARA</div>
+            <div class="sub-badge" style="background:#FAECE7;color:#993C1D;">CARA</div>
             <div class="sub-name">Esponenziale</div>
             <div class="sub-desc">ARA costante · U(c) = −e^(−φc)/φ</div>
             <div class="sub-arrow">→</div>
           </a>
-
           <a class="sub-card" href="iara.html">
-            <div class="sub-badge" style="background:#EAF3DE; color:#3B6D11;">IARA</div>
+            <div class="sub-badge" style="background:#EAF3DE;color:#3B6D11;">IARA</div>
             <div class="sub-name">Quadratica</div>
             <div class="sub-desc">ARA crescente · U(c) = c − (φ/2)c²</div>
             <div class="sub-arrow">→</div>
           </a>
-
           <a class="sub-card" href="hara.html">
-            <div class="sub-badge" style="background:#E6F1FB; color:#185FA5;">HARA</div>
+            <div class="sub-badge" style="background:#E6F1FB;color:#185FA5;">HARA</div>
             <div class="sub-name">Generalizzata</div>
             <div class="sub-desc">ARA iperbolica · generalizza tutte</div>
             <div class="sub-arrow">→</div>
           </a>
-
         </div>
-
         <div class="topic-row locked">
           <div class="topic-num">2.3</div>
           <div class="topic-info">
@@ -405,7 +170,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
       </div>
     </div>
 
@@ -417,7 +181,6 @@ body {
         <div class="section-desc">Simulazione e confronto con i dati reali. L'equity premium puzzle e i tentativi di risolverlo</div>
       </div>
       <div class="topics">
-
         <a class="topic-row clickable" href="mehra_prescott.html">
           <div class="topic-num">3.1</div>
           <div class="topic-info">
@@ -430,7 +193,6 @@ body {
           </div>
           <div class="topic-arrow">→</div>
         </a>
-
         <div class="topic-row locked">
           <div class="topic-num">3.2</div>
           <div class="topic-info">
@@ -440,7 +202,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
         <div class="topic-row locked">
           <div class="topic-num">3.3</div>
           <div class="topic-info">
@@ -450,7 +211,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
         <div class="topic-row locked">
           <div class="topic-num">3.4</div>
           <div class="topic-info">
@@ -460,7 +220,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
       </div>
     </div>
 
@@ -472,7 +231,6 @@ body {
         <div class="section-desc">Dalla teoria economica ai modelli fattoriali. Il SDF come variabile aleatoria generica</div>
       </div>
       <div class="topics">
-
         <div class="topic-row locked">
           <div class="topic-num">4.1</div>
           <div class="topic-info">
@@ -482,7 +240,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
         <div class="topic-row locked">
           <div class="topic-num">4.2</div>
           <div class="topic-info">
@@ -492,7 +249,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
       </div>
     </div>
 
@@ -504,7 +260,6 @@ body {
         <div class="section-desc">Approcci alternativi basati su fattori di rischio osservabili</div>
       </div>
       <div class="topics">
-
         <div class="topic-row locked">
           <div class="topic-num">5.1</div>
           <div class="topic-info">
@@ -514,7 +269,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
         <div class="topic-row locked">
           <div class="topic-num">5.2</div>
           <div class="topic-info">
@@ -524,7 +278,6 @@ body {
           <div class="topic-tags"><span class="tag tag-soon">In arrivo</span></div>
           <div class="topic-arrow">→</div>
         </div>
-
       </div>
     </div>
 
@@ -535,6 +288,5 @@ body {
   <span>Asset Pricing — Materiale Interattivo</span>
   <span>Le pagine <em>disponibili</em> contengono grafici interattivi e formule renderizzate</span>
 </footer>
-
 </body>
 </html>

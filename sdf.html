@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1.2 — Stochastic Discount Factor</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], tags: 'ams' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #111010;
+  --ink-2:     #444340;
+  --ink-3:     #888680;
+  --paper:     #fafaf7;
+  --surface:   #f3f2ee;
+  --border:    #e2e0d8;
+  --border-2:  #ccc9be;
+  --accent:    #1a3a6b;
+  --accent-lt: #e8edf6;
+  --done:      #1a5c3a;
+  --done-lt:   #e6f2eb;
+  --highlight: #7a4e10;
+  --highlight-lt: #fdf0db;
+  --purple:    #4a3090;
+  --purple-lt: #eeedf8;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+/* ── Header ── */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: sticky;
+  top: 0;
+  background: rgba(250,250,247,0.96);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+.breadcrumb {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.breadcrumb a { color: var(--ink-3); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+.page-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.header-badge {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--done-lt);
+  color: var(--done);
+  letter-spacing: 0.5px;
+}
+
+/* ── Layout ── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 6rem;
+}
+
+/* ── Hero ── */
+.hero {
+  margin-bottom: 3.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-label {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.hero h1 {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  line-height: 1.25;
+}
+.hero-lead {
+  font-size: 16px;
+  color: var(--ink-2);
+  max-width: 640px;
+  line-height: 1.8;
+}
+.key-formula {
+  margin-top: 1.75rem;
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+/* ── TOC ── */
+.toc {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  margin-bottom: 3rem;
+}
+.toc-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.toc ol {
+  padding-left: 1.25rem;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 2;
+}
+.toc a { color: var(--ink-2); text-decoration: none; }
+.toc a:hover { color: var(--accent); }
+
+/* ── Sections ── */
+.content-section {
+  margin-bottom: 3rem;
+}
+.content-section h2 {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+.content-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: system-ui, sans-serif;
+  color: var(--ink-2);
+  margin: 1.5rem 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.content-section p {
+  font-size: 15px;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+}
+
+/* ── Callouts ── */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-lt);
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.25rem 0;
+}
+.callout.highlight {
+  border-left-color: var(--highlight);
+  background: var(--highlight-lt);
+}
+.callout.green {
+  border-left-color: var(--done);
+  background: var(--done-lt);
+}
+.callout.purple {
+  border-left-color: var(--purple);
+  background: var(--purple-lt);
+}
+.callout-label {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.callout.highlight .callout-label { color: var(--highlight); }
+.callout.green .callout-label { color: var(--done); }
+.callout.purple .callout-label { color: var(--purple); }
+.callout p { margin-bottom: 0.5rem; font-size: 14px; color: var(--ink-2); }
+.callout p:last-child { margin-bottom: 0; }
+
+/* ── Math ── */
+.math-display {
+  text-align: center;
+  margin: 1.25rem 0;
+  font-size: 16px;
+  overflow-x: auto;
+}
+
+/* ── Definition ── */
+.definition {
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  background: #fff;
+}
+.definition-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 0.5rem;
+}
+.definition p { margin-bottom: 0; font-size: 14.5px; }
+
+/* ── Proposition ── */
+.proposition {
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  background: var(--accent-lt);
+}
+.proposition-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.proposition p { margin-bottom: 0; font-size: 14.5px; color: var(--ink-2); }
+
+/* ── Two-col ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  background: #fff;
+}
+.card-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+.card h4 { font-size: 15px; font-weight: 400; margin-bottom: 0.5rem; }
+.card p { font-size: 13px; margin-bottom: 0; color: var(--ink-3); }
+
+/* ── Table ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  margin: 1rem 0;
+}
+.data-table th {
+  background: var(--surface);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+.data-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink-2);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td:nth-child(n+2) { font-family: 'Courier New', monospace; text-align: right; }
+.data-table th:nth-child(n+2) { text-align: right; }
+
+/* ── Interactive viz ── */
+.viz-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.viz-header {
+  background: var(--surface);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.viz-icon {
+  width: 24px; height: 24px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px;
+}
+.viz-title {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.viz-body { padding: 1.5rem; }
+
+/* ── SDF Explorer ── */
+.sdf-explorer {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+}
+.slider-group { margin-bottom: 1rem; }
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.slider-name {
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.slider-val {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.controls-label {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-3);
+  margin-bottom: 1rem;
+}
+
+/* ── Chart area ── */
+.chart-area { position: relative; }
+canvas { width: 100% !important; }
+
+/* ── Markets diagram ── */
+.markets-diagram {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.market-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  background: #fff;
+}
+.market-card h4 {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.market-card p { font-size: 13px; color: var(--ink-3); margin-bottom: 0; }
+.market-card .math-mini {
+  font-size: 14px;
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+/* ── Nav ── */
+.nav-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 3rem;
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--ink-3);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── Timeline steps ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1.25rem 0;
+}
+.step {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  position: relative;
+}
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-content { flex: 1; padding-top: 5px; }
+.step-title {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 0.25rem;
+}
+.step-text { font-size: 14px; color: var(--ink-3); }
+
+@media (max-width: 700px) {
+  .site-header { padding: 1rem 1.25rem; }
+  .main { padding: 2rem 1.25rem 4rem; }
+  .two-col, .markets-diagram { grid-template-columns: 1fr; }
+  .sdf-explorer { grid-template-columns: 1fr; }
+  .nav-bottom { flex-direction: column; gap: 1rem; }
+  .footer { flex-direction: column; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="breadcrumb">
+      <a href="index.html">Asset Pricing</a>
+      <span>›</span>
+      <span>Parte I</span>
+      <span>›</span>
+      <span>1.2</span>
+    </div>
+    <div class="page-title">Stochastic Discount Factor</div>
+  </div>
+  <span class="header-badge">Disponibile</span>
+</header>
+
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="section-label">Parte I · Fondamenti</div>
+    <h1>Lo Stochastic<br>Discount Factor</h1>
+    <p class="hero-lead">Lo Stochastic Discount Factor (SDF) è la variabile aleatoria che sintetizza, in un unico oggetto matematico, la valutazione del rischio da parte degli investitori. Esso è il cuore dell'asset pricing moderno: tutti i modelli — dal CAPM all'Epstein-Zin — si differenziano per la forma assunta dall'SDF.</p>
+    <div class="key-formula">$$m_{t+1}(s) = \frac{p^s}{\pi(s)}$$</div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">In questa pagina</div>
+    <ol>
+      <li><a href="#definizione">Definizione generale dell'SDF</a></li>
+      <li><a href="#ritardo-rischio">SDF, ritardo e rischio</a></li>
+      <li><a href="#lopp">La Legge del Prezzo Unico e l'esistenza dell'SDF</a></li>
+      <li><a href="#arrow-debreu">Mercati completi e titoli Arrow-Debreu</a></li>
+      <li><a href="#no-arb">Assenza di arbitraggio e positività dell'SDF</a></li>
+      <li><a href="#incompleti">Mercati incompleti e non unicità</a></li>
+      <li><a href="#idio">Rischio idiosincratico vs sistematico</a></li>
+      <li><a href="#explorer">Esploratore interattivo dell'SDF</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1: Definizione -->
+  <div class="content-section" id="definizione">
+    <h2>Definizione generale dell'SDF</h2>
+
+    <p>L'SDF è una <strong>variabile aleatoria</strong> $m_{t+1}$ che assegna un peso a ciascun possibile payoff futuro, tenendo conto sia del valore temporale del denaro sia del rischio. Formalmente, esso è un vettore con una realizzazione per ogni stato di natura:</p>
+
+    <div class="math-display">$$m_{t+1} \equiv [m_{t+1}(1),\; m_{t+1}(2),\; \ldots,\; m_{t+1}(S)]^{\prime}$$</div>
+
+    <p>Il suo ruolo è duplice:</p>
+
+    <div class="two-col">
+      <div class="card">
+        <span class="card-badge" style="background:#e8edf6;color:#1a3a6b;">RITARDO</span>
+        <h4>Valore temporale del denaro</h4>
+        <p>Un euro domani vale meno di un euro oggi. Questa compensazione è la stessa per tutti gli stati: è catturata dal valore atteso $\mathbb{E}[m]$.</p>
+      </div>
+      <div class="card">
+        <span class="card-badge" style="background:#fdf0db;color:#7a4e10;">RISCHIO</span>
+        <h4>Valutazione dell'incertezza</h4>
+        <p>Un euro in uno stato "cattivo" vale di più di un euro in uno stato "buono". Questa asimmetria è catturata dalla distribuzione di $m$ attorno alla sua media.</p>
+      </div>
+    </div>
+
+    <div class="definition">
+      <div class="definition-title">Definizione formale — Stochastic Discount Factor</div>
+      <p>L'SDF, detto anche <em>pricing kernel</em> o <em>fattore di sconto stocastico</em>, è un processo stocastico $\{m_{t+1}\}$ tale che per ogni asset con payoff $x_{t+1}$ e prezzo $p_t$:</p>
+      <div class="math-display">$$p_t = \mathbb{E}_t[m_{t+1}\, x_{t+1}]$$</div>
+      <p style="margin-top:0.5rem;">La distribuzione di $x_{t+1}$ è la sorgente del rischio nel payoff; la distribuzione di $m_{t+1}$ è il <em>kernel di pricing</em> che determina come il rischio viene valutato oggi.</p>
+    </div>
+
+    <h3>Perché "stocastico"?</h3>
+    <p>Il termine "stocastico" sottolinea che l'SDF non è un numero fisso come nel tradizionale sconto deterministico $1/(1+r)^T$, ma una variabile casuale che assume valori diversi in stati diversi. Questa variabilità è essenziale: è proprio attraverso essa che la formula riesce a valutare il rischio.</p>
+
+    <p>In un mondo senza incertezza (un solo stato) si avrebbe $m = 1/R^f$ con certezza, recuperando il classico fattore di sconto deterministico. La complessità dell'asset pricing moderno nasce interamente dalla distribuzione di $m$ tra gli stati.</p>
+  </div>
+
+  <!-- SECTION 2: Ritardo e rischio -->
+  <div class="content-section" id="ritardo-rischio">
+    <h2>SDF, ritardo e rischio</h2>
+
+    <h3>La remunerazione del ritardo</h3>
+    <p>Applicando la formula di pricing all'asset privo di rischio con payoff costante $x^f$ in ogni stato:</p>
+
+    <div class="math-display">$$p^f = \mathbb{E}[m \cdot x^f] = \mathbb{E}[m]\cdot x^f$$</div>
+
+    <p>Dividendo entrambi i lati per $p^f$ e usando la definizione $R^f = x^f/p^f$:</p>
+
+    <div class="math-display">$$\boxed{1 = \mathbb{E}[m_{t+1}]\cdot R^f \quad \Longleftrightarrow \quad \mathbb{E}[m_{t+1}] = \frac{1}{R^f}}$$</div>
+
+    <div class="callout">
+      <div class="callout-label">Interpretazione</div>
+      <p>Il <strong>valore atteso dell'SDF</strong> è esattamente il reciproco del rendimento privo di rischio, cioè il classico fattore di sconto deterministico. Questo ci dice che la media di $m$ misura esclusivamente la <em>remunerazione per il ritardo</em>, indipendentemente dal rischio.</p>
+    </div>
+
+    <p>Nell'esempio di riferimento: $\mathbb{E}[m] = 0.45 \times 0.35 + 0.55 \times 1.52 = 0.158 + 0.836 = 0.990$, e $1/R^f = 1/1.01 \approx 0.990$. ✓</p>
+
+    <h3>La remunerazione del rischio</h3>
+    <p>Per un asset rischioso, partendo dalla formula $1 = \mathbb{E}[mR]$ e usando la decomposizione covarianza-media:</p>
+
+    <div class="math-display">$$\mathbb{E}[mR] = \mathbb{E}[m]\cdot\mathbb{E}[R] + \text{cov}(m, R) = 1$$</div>
+
+    <p>Sostituendo $\mathbb{E}[m] = 1/R^f$:</p>
+
+    <div class="math-display">$$\boxed{\mathbb{E}[R] - R^f = -R^f \cdot \text{cov}(m_{t+1},\, R_{t+1})}$$</div>
+
+    <div class="callout highlight">
+      <div class="callout-label">Premio al rischio</div>
+      <p>Il <strong>premio al rischio</strong> di un asset è proporzionale alla covarianza negativa tra il suo rendimento e l'SDF. Un asset che paga di più quando $m$ è alto (negli stati "cattivi") ha una covarianza negativa con $m$, e quindi deve offrire un rendimento atteso <em>inferiore</em> al tasso risk-free (ha un premio negativo). Funge da assicurazione.</p>
+      <p>Al contrario, un asset che paga di più quando $m$ è basso (negli stati "buoni") ha una covarianza positiva con $m$ e deve offrire un rendimento atteso <em>superiore</em> al tasso risk-free per indurre gli investitori a detenerlo.</p>
+    </div>
+
+    <h3>La decomposizione del premio</h3>
+    <p>Il premio al rischio può anche essere scritto come un prodotto tra deviazioni standard e correlazione:</p>
+
+    <div class="math-display">$$\mathbb{E}[R^i] - R^f = -R^f \cdot \sigma(m)\cdot\sigma(R^i)\cdot\rho(m, R^i)$$</div>
+
+    <p>dove $\rho(m, R^i)$ è il coefficiente di correlazione tra SDF e rendimento. Questa forma mostra che il premio dipende da tre ingredienti: la volatilità dell'SDF (misura dell'avversione al rischio aggregata), la volatilità del rendimento, e la correlazione tra i due.</p>
+
+    <h3>Rischio idiosincratico e sistematico</h3>
+    <p>Cosa succede se $\text{cov}(m, x) = 0$? La formula diventa:</p>
+
+    <div class="math-display">$$p = \frac{\mathbb{E}[x]}{R^f}$$</div>
+
+    <div class="callout green">
+      <div class="callout-label">Principio fondamentale</div>
+      <p>Un asset con payoff molto variabile ma <strong>non correlato</strong> con l'SDF viene prezzato esattamente come se fosse privo di rischio, qualunque sia la varianza del suo payoff e qualunque sia l'avversione al rischio degli investitori. Questo perché il suo rischio è puramente <em>idiosincratico</em>: diversificabile, non sistematico.</p>
+      <p>Solo il rischio <strong>sistematico</strong> (correlato con l'SDF) genera un premio al rischio.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3: LOP e esistenza -->
+  <div class="content-section" id="lopp">
+    <h2>La Legge del Prezzo Unico e l'esistenza dell'SDF</h2>
+
+    <p>Prima di chiederci <em>quale</em> SDF usare, dobbiamo chiederci se l'SDF <em>esiste</em>. La risposta dipende da ipotesi sulle struttura del mercato finanziario.</p>
+
+    <div class="definition">
+      <div class="definition-title">Definizione — Legge del Prezzo Unico (LPU)</div>
+      <p>La Legge del Prezzo Unico afferma che il prezzo di un portafoglio è uguale alla combinazione dei prezzi dei suoi componenti. Formalmente, per ogni payoff $x^i$, $x^j$ e scalari $a$, $b$:</p>
+      <div class="math-display">$$p(ax^i + bx^j) = a\,p(x^i) + b\,p(x^j)$$</div>
+      <p>La LPU impedisce profitti istantanei da "riconfezionamento" di portafogli.</p>
+    </div>
+
+    <p>La LPU è una condizione molto debole sulle preferenze degli investitori: basta che un solo investitore valuti i portafogli per il loro contenuto (e non per come sono presentati) perché le opportunità di arbitraggio vengano eliminate dalla forza del mercato.</p>
+
+    <div class="proposition">
+      <div class="proposition-title">Teorema — Esistenza dell'SDF (dalla LPU)</div>
+      <p>Se la funzione di pricing $p(\cdot)$ soddisfa la Legge del Prezzo Unico, allora <strong>esiste</strong> uno Stochastic Discount Factor $m$ tale che per ogni asset nello spazio dei payoff:</p>
+      <div class="math-display">$$p(x) = \mathbb{E}[m\,x]$$</div>
+    </div>
+
+    <p>La dimostrazione è semplice: la LPU implica che $p(\cdot)$ è un'applicazione lineare dallo spazio dei payoff ai reali. Per il teorema di rappresentazione di Riesz, ogni funzionale lineare su uno spazio euclideo può essere rappresentato come prodotto scalare con un elemento del medesimo spazio. Quell'elemento è esattamente l'SDF.</p>
+
+    <p>L'SDF garantito dalla LPU <strong>non è necessariamente unico né positivo</strong>. Condizioni aggiuntive sono necessarie per ottenere unicità (mercati completi) e positività (assenza di arbitraggio).</p>
+  </div>
+
+  <!-- SECTION 4: Arrow-Debreu -->
+  <div class="content-section" id="arrow-debreu">
+    <h2>Mercati completi e titoli Arrow-Debreu</h2>
+
+    <p>Nei <strong>mercati completi</strong> esiste un titolo contingente per ogni stato di natura possibile. Questi titoli sono detti <em>titoli Arrow-Debreu</em>, <em>state-price securities</em> o <em>pure securities</em>.</p>
+
+    <div class="definition">
+      <div class="definition-title">Definizione — Titolo contingente (Arrow-Debreu)</div>
+      <p>Il titolo contingente allo stato $\bar{s}$ è un asset che paga esattamente 1 unità se e solo se lo stato $s = \bar{s}$ si realizza, e 0 in tutti gli altri stati:</p>
+      <div class="math-display">$$x^{\bar{s}}(s) = \begin{cases} 1 & \text{se } s = \bar{s} \\ 0 & \text{altrimenti} \end{cases}$$</div>
+      <p>Il suo prezzo oggi è denotato $p^{\bar{s}} \equiv p(x^{\bar{s}})$, detto <em>prezzo di stato</em> (<em>state price</em>).</p>
+    </div>
+
+    <h3>Decomposizione di un generico asset</h3>
+    <p>In mercati completi, grazie alla <em>libera formazione del portafoglio</em>, qualsiasi payoff $x$ può essere replicato come combinazione lineare di titoli Arrow-Debreu:</p>
+
+    <div class="math-display">$$x = \sum_{s=1}^{S} x(s)\cdot x^s$$</div>
+
+    <p>Applicando la Legge del Prezzo Unico:</p>
+
+    <div class="math-display">$$p(x) = \sum_{s=1}^{S} x(s)\cdot p^s = \sum_{s=1}^{S} \pi(s)\underbrace{\frac{p^s}{\pi(s)}}_{m(s)} x(s) = \mathbb{E}[mx]$$</div>
+
+    <div class="proposition">
+      <div class="proposition-title">Proposizione — SDF e prezzi di stato</div>
+      <p>In mercati completi, l'SDF esiste ed è unico. Per ogni stato $s$, esso è uguale al prezzo del titolo Arrow-Debreu per quello stato, normalizzato per la probabilità di quello stato:</p>
+      <div class="math-display">$$m(s) = \frac{p^s}{\pi(s)}$$</div>
+    </div>
+
+    <p>Questa rappresentazione ha una bella interpretazione: $m(s)$ misura il prezzo di un euro in quello stato relativo alla sua probabilità. Se $m(s) > \mathbb{E}[m]$, lo stato $s$ è "costoso" — gli investitori sono disposti a pagare più della media per avere risorse in quello stato (stato di recessione, catastrofe, ecc.).</p>
+
+    <h3>L'analogia del "happy meal"</h3>
+    <p>Come in un fast food senza frizioni il prezzo del menù completo dovrebbe essere uguale alla somma dei prezzi dei singoli componenti, il prezzo di qualsiasi asset deve essere uguale alla somma dei prezzi dei titoli contingenti che replicano il suo payoff. Qualsiasi deviazione verrebbe immediatamente sfruttata dagli arbitraggisti.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stato $s$</th>
+          <th>$\pi(s)$</th>
+          <th>$p^s$ (prezzo stato)</th>
+          <th>$m(s) = p^s/\pi(s)$</th>
+          <th>$m(s)$ vs $\mathbb{E}[m]$</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$s = 1$ (stato "buono")</td>
+          <td>0.45</td>
+          <td>0.1575</td>
+          <td>0.35</td>
+          <td style="color:#1a5c3a;">< 0.990 (basso)</td>
+        </tr>
+        <tr>
+          <td>$s = 2$ (stato "cattivo")</td>
+          <td>0.55</td>
+          <td>0.8360</td>
+          <td>1.52</td>
+          <td style="color:#7a4e10;">> 0.990 (alto)</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align:right;color:var(--ink-3);font-family:system-ui,sans-serif;font-size:12px;">Totale prezzi di stato</td>
+          <td>0.9935 ≈ 1/R^f</td>
+          <td>$\mathbb{E}[m]$</td>
+          <td>0.990</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 5: No arbitrage -->
+  <div class="content-section" id="no-arb">
+    <h2>Assenza di arbitraggio e positività dell'SDF</h2>
+
+    <div class="definition">
+      <div class="definition-title">Definizione — Assenza di arbitraggio</div>
+      <p>Un mercato è privo di opportunità di arbitraggio se non esiste un portafoglio con payoff non negativo in tutti gli stati e strettamente positivo con probabilità positiva, che abbia prezzo non positivo. Formalmente: se $x \geq 0$ e $x > 0$ con prob. positiva, allora $p(x) > 0$.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">SDF positivo → assenza di arbitraggio</div>
+          <div class="step-text">Se $m(s) > 0$ per ogni $s$, allora qualsiasi payoff strettamente positivo $x > 0$ ha prezzo $p = \mathbb{E}[mx] > 0$. Dunque $m > 0$ implica l'assenza di arbitraggio. Questo risulta naturalmente dall'utilità marginale: $m(s) = \beta\, u'(c_{t+1}(s))/u'(c_t) > 0$ poiché la satollazione è rara e l'utilità marginale è positiva.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Assenza di arbitraggio → SDF positivo (teorema)</div>
+          <div class="step-text">Il viceversa è più sottile e più interessante: se il mercato è privo di arbitraggio, allora esiste almeno un SDF strettamente positivo $m > 0$. La dimostrazione si basa sulla separazione di insiemi convessi: l'iperpiano dei payoff a prezzo zero separa il cono positivo (payoff con prezzo positivo) dal complementare.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Interpretazione geometrica</div>
+          <div class="step-text">L'SDF corrisponde alla direzione del vettore perpendicolare alle isoprezzo-zero nel piano dei payoff. La condizione di no-arbitraggio impone che questo vettore punti verso l'alto e a destra (valori positivi in tutti gli stati), escludendo che il cono positivo sia attraversato dalle isoprezzo negative.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-label">Riepilogo — Le due frecce</div>
+      <p><strong>$m > 0 \Rightarrow$ no arbitrage</strong> (facile): una conseguenza diretta dell'utilità marginale positiva.</p>
+      <p><strong>No arbitrage $\Rightarrow \exists\, m > 0$</strong> (più profondo): la condizione di non arbitraggio è sufficiente per garantire l'esistenza di un SDF positivo, anche senza assumere alcuna forma di utilità. Questo risultato è alla base di tutti i modelli di pricing privi di arbitraggio.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Mercati incompleti -->
+  <div class="content-section" id="incompleti">
+    <h2>Mercati completi vs incompleti</h2>
+
+    <p>La distinzione tra mercati completi e incompleti è fondamentale per capire l'unicità dell'SDF.</p>
+
+    <div class="markets-diagram">
+      <div class="market-card">
+        <h4>Mercati completi ($X = \mathbb{R}^S$)</h4>
+        <div class="math-mini">Esiste un titolo contingente per ogni stato $s$</div>
+        <p><strong>SDF unico e positivo.</strong> Con la LPU, $m(s) = p^s/\pi(s)$ è l'unico SDF ammissibile. Con il no-arbitraggio, è anche necessariamente positivo.</p>
+      </div>
+      <div class="market-card">
+        <h4>Mercati incompleti ($X \subsetneq \mathbb{R}^S$)</h4>
+        <div class="math-mini">Solo un sottoinsieme dei payoff è scambiabile</div>
+        <p><strong>SDF non unico.</strong> Qualsiasi $m = x^* + \varepsilon$ con $\mathbb{E}[\varepsilon\, x] = 0$ (componente perpendicolare allo spazio dei payoff) è un SDF valido. Esistono infiniti SDF positivi compatibili con i prezzi osservati.</p>
+      </div>
+    </div>
+
+    <p>I mercati reali sono tipicamente incompleti: esistono molti più "stati del mondo" possibili di quanti siano gli asset indipendenti scambiati. Questo ha implicazioni importanti:</p>
+
+    <ul style="padding-left:1.5rem; font-size:15px; color:var(--ink-2); line-height:2; margin:1rem 0;">
+      <li>Non è possibile identificare con certezza l'SDF "vero" osservando solo i prezzi di mercato</li>
+      <li>Le isoprezzo nello spazio degli stati possono essere determinate solo all'interno dello spazio dei payoff $X$</li>
+      <li>Il vettore $x^*$ (proiezione dell'SDF sullo spazio dei payoff) è l'unico componente dell'SDF identificabile dai dati</li>
+    </ul>
+
+    <div class="callout purple">
+      <div class="callout-label">Il teorema fondamentale dell'asset pricing</div>
+      <p>Mettendo insieme i risultati precedenti, otteniamo il <em>Teorema Fondamentale dell'Asset Pricing</em>:</p>
+      <p>(i) La Legge del Prezzo Unico ↔ esiste un SDF (non necessariamente positivo)</p>
+      <p>(ii) L'assenza di arbitraggio ↔ esiste un SDF strettamente positivo</p>
+      <p>(iii) I mercati sono completi e privi di arbitraggio ↔ l'SDF positivo è unico</p>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Idio vs sistematico -->
+  <div class="content-section" id="idio">
+    <h2>Rischio idiosincratico vs sistematico</h2>
+    <p>Qualsiasi payoff $x$ può essere decomposto in una parte correlata con l'SDF e una parte irrilevante per i prezzi:</p>
+
+    <div class="math-display">$$x = \underbrace{\text{proj}(x|m)}_{\text{rischio sistematico}} + \underbrace{\varepsilon}_{\text{rischio idiosincratico}}$$</div>
+
+    <p>dove $\varepsilon$ è definito tale che $\mathbb{E}[\varepsilon\, m] = 0$, cioè è ortogonale all'SDF nello spazio dei payoff.</p>
+
+    <div class="callout">
+      <div class="callout-label">Conseguenza diretta</div>
+      <p>Il prezzo del rischio idiosincratico $\varepsilon$ è zero: $p(\varepsilon) = \mathbb{E}[m\varepsilon] = 0$. Il prezzo di $x$ è uguale al prezzo della sua proiezione su $m$, che è la parte di $x$ perfettamente correlata con l'SDF.</p>
+      <p>Questo è il principio alla base della diversificazione: un portafoglio ben diversificato elimina il rischio idiosincratico (residuo) e mantiene solo l'esposizione al rischio sistematico.</p>
+    </div>
+
+    <p>La decomposizione implica anche:</p>
+    <div class="math-display">$$\mathbb{E}[R^i] - R^f = \underbrace{-R^f\,\text{cov}(m, R^i)}_{\text{solo dalla parte sistematica di }R^i}$$</div>
+  </div>
+
+  <!-- SECTION 8: Interactive SDF Explorer -->
+  <div class="content-section" id="explorer">
+    <h2>Esploratore interattivo dell'SDF</h2>
+    <p>Visualizza come l'SDF pesa i payoff nei due stati rispetto alle probabilità. La differenza tra pesi dell'SDF ($m(s)\cdot\pi(s)$) e probabilità ($\pi(s)$) rivela il contributo del rischio.</p>
+
+    <div class="viz-box">
+      <div class="viz-header">
+        <div class="viz-icon">◎</div>
+        <div class="viz-title">SDF Explorer — Decomposizione pesi e premi</div>
+      </div>
+      <div class="viz-body">
+        <div class="sdf-explorer">
+          <div>
+            <div class="controls-label">Parametri SDF</div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span class="slider-name">$m(1)$ — SDF stato buono</span>
+                <span class="slider-val" id="e-m1-lbl">0.35</span>
+              </div>
+              <input type="range" id="e-m1" min="0.05" max="2.0" step="0.01" value="0.35">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span class="slider-name">$m(2)$ — SDF stato cattivo</span>
+                <span class="slider-val" id="e-m2-lbl">1.52</span>
+              </div>
+              <input type="range" id="e-m2" min="0.5" step="0.01" max="4.0" value="1.52">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span class="slider-name">$\pi(1)$ — Prob. stato buono</span>
+                <span class="slider-val" id="e-pi-lbl">0.45</span>
+              </div>
+              <input type="range" id="e-pi" min="0.05" max="0.95" step="0.01" value="0.45">
+            </div>
+
+            <div style="margin-top:1.5rem; border:1px solid var(--border); border-radius:8px; padding:1rem; background:var(--surface);">
+              <div style="font-family:system-ui;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);margin-bottom:0.75rem;">Statistiche SDF</div>
+              <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                <div style="display:flex;justify-content:space-between;font-family:system-ui;font-size:12px;">
+                  <span style="color:var(--ink-3);">$\mathbb{E}[m]$</span>
+                  <span id="e-em" style="font-family:'Courier New',monospace;font-weight:700;color:var(--accent);">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:system-ui;font-size:12px;">
+                  <span style="color:var(--ink-3);">$R^f = 1/\mathbb{E}[m]$</span>
+                  <span id="e-rf" style="font-family:'Courier New',monospace;font-weight:700;color:var(--accent);">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:system-ui;font-size:12px;">
+                  <span style="color:var(--ink-3);">$\sigma(m)$</span>
+                  <span id="e-sm" style="font-family:'Courier New',monospace;font-weight:700;color:var(--accent);">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:system-ui;font-size:12px;">
+                  <span style="color:var(--ink-3);">$\sigma(m)/\mathbb{E}[m]$ (SR bound)</span>
+                  <span id="e-sr" style="font-family:'Courier New',monospace;font-weight:700;color:var(--highlight);">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-area">
+            <canvas id="sdfChart" height="320"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav-bottom">
+    <a href="assets_formula.html" class="nav-btn">← 1.1 Assets Finanziari</a>
+    <a href="consumption_based_model.html" class="nav-btn">2.1 Consumption-Based Model →</a>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>Asset Pricing · 1.2 — Stochastic Discount Factor</span>
+  <span>Parte I · Fondamenti</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ── SDF Explorer ──
+const ctx = document.getElementById('sdfChart').getContext('2d');
+
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Stato 1 (buono)', 'Stato 2 (cattivo)'],
+    datasets: [
+      {
+        label: 'Probabilità π(s)',
+        data: [0.45, 0.55],
+        backgroundColor: 'rgba(26,58,107,0.25)',
+        borderColor: 'rgba(26,58,107,0.8)',
+        borderWidth: 1.5,
+      },
+      {
+        label: 'Peso SDF π(s)·m(s)',
+        data: [0.45*0.35, 0.55*1.52],
+        backgroundColor: ['rgba(26,92,58,0.6)', 'rgba(122,78,16,0.6)'],
+        borderColor: ['rgba(26,92,58,1)', 'rgba(122,78,16,1)'],
+        borderWidth: 1.5,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top', labels: { font: { family: 'system-ui', size: 12 }, color: '#444340' } },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(4)}`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 1.1,
+        title: { display: true, text: 'Peso', font: { family: 'system-ui', size: 11 }, color: '#888680' },
+        ticks: { font: { family: 'Courier New', size: 11 }, color: '#888680' },
+        grid: { color: '#e2e0d8' }
+      },
+      x: {
+        ticks: { font: { family: 'system-ui', size: 12 }, color: '#444340' },
+        grid: { color: '#e2e0d8' }
+      }
+    }
+  }
+});
+
+function updateExplorer(){
+  const m1 = +document.getElementById('e-m1').value;
+  const m2 = +document.getElementById('e-m2').value;
+  const pi1 = +document.getElementById('e-pi').value;
+  const pi2 = 1 - pi1;
+
+  document.getElementById('e-m1-lbl').textContent = m1.toFixed(2);
+  document.getElementById('e-m2-lbl').textContent = m2.toFixed(2);
+  document.getElementById('e-pi-lbl').textContent = pi1.toFixed(2);
+
+  const Em = pi1*m1 + pi2*m2;
+  const Em2 = pi1*m1*m1 + pi2*m2*m2;
+  const Var = Em2 - Em*Em;
+  const Sig = Math.sqrt(Math.max(0, Var));
+  const Rf  = 1/Em;
+  const SR  = Sig/Em;
+
+  document.getElementById('e-em').textContent = Em.toFixed(4);
+  document.getElementById('e-rf').textContent = Rf.toFixed(4) + ' (' + ((Rf-1)*100).toFixed(2) + '%)';
+  document.getElementById('e-sm').textContent = Sig.toFixed(4);
+  document.getElementById('e-sr').textContent = SR.toFixed(4);
+
+  // Update chart
+  chart.data.labels = [`Stato 1 (s=1)`, `Stato 2 (s=2)`];
+  chart.data.datasets[0].data = [pi1, pi2];
+  chart.data.datasets[1].data = [pi1*m1, pi2*m2];
+
+  // Dynamic y max
+  const maxVal = Math.max(pi1, pi2, pi1*m1, pi2*m2) * 1.15;
+  chart.options.scales.y.max = Math.min(2.5, maxVal);
+
+  chart.update();
+}
+
+['e-m1','e-m2','e-pi'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateExplorer);
+});
+
+updateExplorer();
+</script>
+</body>
+</html>
